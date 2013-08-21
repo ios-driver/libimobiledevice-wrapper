@@ -10,3 +10,4 @@ target/
 *.iml
 *.sh
 *.jar
+.DS_Store

@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.libimobiledevice.ios.driver.binding.IMobileDeviceFactory;
 import org.libimobiledevice.ios.driver.binding.IOSDevice;
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
-import org.libimobiledevice.ios.driver.binding.sdk.IDevice;
 import org.libimobiledevice.ios.driver.binding.sdk.IDeviceSDK;
 import org.testng.annotations.Test;
 
@@ -19,7 +18,6 @@ public class IDeviceNewTests {
   public void device() throws LibImobileException, InterruptedException {
     IDeviceSDK d = new IDeviceSDK(main);
     d.release();
-
 
     System.out.println(d.isDeveloperMode());
   }

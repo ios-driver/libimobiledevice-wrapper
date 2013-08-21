@@ -14,7 +14,11 @@
 
 package org.libimobiledevice.ios.driver.binding.exceptions;
 
-public class LibImobileException extends Exception {
+import java.lang.RuntimeException;
+import java.lang.String;
+import java.lang.Throwable;
+
+public class LibImobileException extends RuntimeException {
 
   public LibImobileException() {
   }

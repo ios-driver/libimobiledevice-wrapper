@@ -18,7 +18,6 @@ import com.sun.jna.NativeLibrary;
 
 import org.apache.commons.io.IOUtils;
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
-import org.libimobiledevice.ios.driver.binding.exceptions.NonDevDeviceException;
 import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary;
 
 import java.io.File;
@@ -112,7 +111,7 @@ public class IMobileDeviceFactory {
   }
 
 
-  public static void release(){
+  public static void release() {
     devices.clear();
   }
 

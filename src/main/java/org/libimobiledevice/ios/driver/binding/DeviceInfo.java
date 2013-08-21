@@ -23,7 +23,8 @@ import com.dd.plist.NSObject;
 import com.dd.plist.NSString;
 
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
-import org.libimobiledevice.ios.driver.binding.exceptions.NonDevDeviceException;
+import org.libimobiledevice.ios.driver.sdk.IDeviceSDK;
+import org.libimobiledevice.ios.driver.sdk.InformationService;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Node;
@@ -122,7 +123,8 @@ public class DeviceInfo {
 
   public DeviceInfo(String uuid) throws LibImobileException {
     IOSDevice device = factory.get(uuid);
-    String res = null; //device.getLockDownValue(null, null);
+    InformationService service = new InformationService(new IDeviceSDK(uuid));
+    String res = service.getValueAsXML(null, null);
 
     this.raw = res;
     try {

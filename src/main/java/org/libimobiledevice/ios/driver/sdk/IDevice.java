@@ -16,9 +16,9 @@ package org.libimobiledevice.ios.driver.sdk;
 
 import com.sun.jna.ptr.PointerByReference;
 
-import org.libimobiledevice.binding.raw.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.ImobiledeviceInstrumentsLibrary;
 import org.libimobiledevice.ios.driver.binding.ImobiledeviceLibrary;
+import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 
 public class IDevice {
 
