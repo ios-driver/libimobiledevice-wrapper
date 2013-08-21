@@ -1,0 +1,19 @@
+libimobiledevice-wrapper
+------------------------
+This project provides Java bindings for all platforms around the C libraries of
+the libimobiledevice family.
+
+The Java source code is licensed under the Apache License 2.0.
+
+Native shared library dependencies alongside licenses and URLs:
+* libimobiledevice (LGPL 2.1) - http://cgit.sukimashita.com/libimobiledevice.git/
+* libimobiledevice-instruments (Commercial License) - http://mirell.de
+* libimobiledevice-sdk (LGPL 2.1) - http://cgit.sukimashita.com/libimobiledevice-sdk.git/
+* libplist (LGPL 2.1) - http://cgit.sukimashita.com/libplist.git/
+* libusbmuxd (LGPL 2.1) -http://cgit.sukimashita.com/usbmuxd.git/
+* openssl (LGPL 2.1) - http://openssl.org
+* libiconv (LGPL 2.1) - http://www.gnu.org/software/libiconv/
+* liblzma (Public Domain) - http://tukaani.org/xz/
+* libxml2 (MIT) - http://www.xmlsoft.org/FAQ.html
+* libzip (Custom License) - http://www.nih.at/libzip/LICENSE.html
+* libz (Public Domain) - http://www.zlib.net/zlib_license.html
