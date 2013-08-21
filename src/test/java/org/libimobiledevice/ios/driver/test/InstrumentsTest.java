@@ -95,7 +95,7 @@ public class InstrumentsTest {
   @Test(groups = "smoke")
   public void parallel() throws InterruptedException, LibImobileException {
     IDeviceSDK d = new IDeviceSDK(main);
-    InstrumentsService service = new InstrumentsService(d,"com.yourcompany.UICatalog");
+    InstrumentsService service = new InstrumentsService(d,"com.yourcompany.UICatalog",null);
 
     service.executeScriptNonManaged(s3);
     Thread.sleep(1000);

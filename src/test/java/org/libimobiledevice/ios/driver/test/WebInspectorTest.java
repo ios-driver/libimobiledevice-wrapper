@@ -1,8 +1,8 @@
 package org.libimobiledevice.ios.driver.test;
 
 import org.libimobiledevice.ios.driver.binding.IMobileDeviceFactory;
-import org.libimobiledevice.ios.driver.sdk.IDeviceSDK;
-import org.libimobiledevice.ios.driver.sdk.WebInspectorService;
+import org.libimobiledevice.ios.driver.binding.sdk.IDeviceSDK;
+import org.libimobiledevice.ios.driver.binding.sdk.WebInspectorService;
 import org.testng.annotations.Test;
 
 import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;

@@ -23,8 +23,8 @@ import com.dd.plist.NSObject;
 import com.dd.plist.NSString;
 
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
-import org.libimobiledevice.ios.driver.sdk.IDeviceSDK;
-import org.libimobiledevice.ios.driver.sdk.InformationService;
+import org.libimobiledevice.ios.driver.binding.sdk.IDeviceSDK;
+import org.libimobiledevice.ios.driver.binding.sdk.InformationService;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Node;

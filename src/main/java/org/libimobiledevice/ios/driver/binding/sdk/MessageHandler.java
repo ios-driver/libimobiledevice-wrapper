@@ -12,7 +12,7 @@
  * the License.
  */
 
-package org.libimobiledevice.ios.driver.sdk;
+package org.libimobiledevice.ios.driver.binding.sdk;
 
 public interface MessageHandler {
 
