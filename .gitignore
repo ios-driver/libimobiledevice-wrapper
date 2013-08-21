@@ -1,0 +1,12 @@
+*.h
+*.dylib
+*.so
+*.dll
+.settings
+target/
+.classpath
+.project
+.idea/*
+*.iml
+*.sh
+*.jar
