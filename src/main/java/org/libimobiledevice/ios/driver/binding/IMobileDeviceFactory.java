@@ -29,19 +29,8 @@ import java.util.Map;
 
 public class IMobileDeviceFactory {
 
-  private DeviceDetectionCallback callback = new DeviceDetectionCallback() {
-    @Override
-    public void onAdded(String uuid) {
-      System.out.println("ADDED " + uuid);
-    }
-
-    @Override
-    public void onRemoved(String uuid) {
-      System.out.println("REMOVED " + uuid);
-    }
-  };
-
-  private final DeviceCallBack cb_t = new DeviceCallBack(callback);
+  private DeviceDetectionCallback callback;
+  private DeviceCallBack cb_t;
 
   static {
     File f = new File(System.getProperty("user.home"));
@@ -119,7 +108,7 @@ public class IMobileDeviceFactory {
     if (cb == null) {
       throw new IllegalArgumentException("cb cannot null");
     }
-    callback = cb;
+    cb_t = new DeviceCallBack(cb);
   }
 
   public void startDetection() {
