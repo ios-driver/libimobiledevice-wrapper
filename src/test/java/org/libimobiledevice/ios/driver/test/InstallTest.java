@@ -1,5 +1,6 @@
 package org.libimobiledevice.ios.driver.test;
 
+import org.libimobiledevice.ios.driver.binding.ApplicationInfo;
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.sdk.IDeviceSDK;
 import org.libimobiledevice.ios.driver.binding.sdk.InstallerService;
@@ -7,6 +8,7 @@ import org.libimobiledevice.ios.driver.binding.sdk.SysLogService;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.util.List;
 
 import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
 
@@ -44,7 +46,8 @@ public class InstallTest {
   public void canListApplications() throws LibImobileException {
     IDeviceSDK d = new IDeviceSDK(main);
     InstallerService service = new InstallerService(d);
-    service.listApplications();
+    List<ApplicationInfo> infos = service.listApplications();
+    System.out.println(infos);
   }
 //
 //  @Test

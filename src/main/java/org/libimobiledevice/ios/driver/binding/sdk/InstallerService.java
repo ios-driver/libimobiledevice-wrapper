@@ -17,10 +17,10 @@ package org.libimobiledevice.ios.driver.binding.sdk;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
+import org.libimobiledevice.ios.driver.binding.ApplicationInfo;
 import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary;
 
 import java.io.File;
-import java.nio.IntBuffer;
 import java.util.List;
 
 public class InstallerService {
@@ -33,13 +33,17 @@ public class InstallerService {
     service = new ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t(ptr.getValue());
   }
 
-
-  public List<Object> listApplications() {
+  public List<ApplicationInfo> listApplications() {
     PointerByReference ptr = new PointerByReference();
     ImobiledeviceSdkLibrary
         .installation_service_get_application_list_as_xml(service, 1, ptr);
     String all = ptr.getValue().getString(0);
-   return null;
+    return parse(all);
+  }
+
+  private List<ApplicationInfo> parse(String raw) {
+    List<ApplicationInfo> infos = ApplicationInfo.extractApplications(raw);
+    return infos;
   }
 
   public void install(File ipa) {
@@ -48,10 +52,13 @@ public class InstallerService {
           @Override
           public void apply(Pointer operation, Pointer message, int precent_complete,
                             Pointer user_data) {
-            System.out.println(operation.getString(0) + precent_complete+"%");
+            System.out.println(operation.getString(0) + precent_complete + "%");
             System.out.println(message.getString(0));
           }
         };
-    ImobiledeviceSdkLibrary.installation_service_install_application_from_archive_with_callback(service,ipa.getAbsolutePath(),callback,null);
+    ImobiledeviceSdkLibrary
+        .installation_service_install_application_from_archive_with_callback(service,
+                                                                             ipa.getAbsolutePath(),
+                                                                             callback, null);
   }
 }

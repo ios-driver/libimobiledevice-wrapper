@@ -24,6 +24,7 @@ import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary;
 import org.libimobiledevice.ios.driver.binding.sdk.IDevice;
 
 import java.nio.IntBuffer;
+import java.util.logging.Logger;
 
 
 public class IOSDevice {
@@ -35,6 +36,8 @@ public class IOSDevice {
   private
   ImobiledeviceSdkLibrary.sdk_idevice_information_service_t
       sdk_idevice_information_service_t;
+  private static final Logger log = Logger.getLogger(IOSDevice.class.getName());
+
 
   IOSDevice(String uuid) throws LibImobileException {
     if (uuid == null) {
@@ -52,7 +55,8 @@ public class IOSDevice {
     sdk_handle = new ImobiledeviceSdkLibrary.sdk_idevice_t(sdk.getValue());
 
     if (!isDeveloperMode()) {
-      throw new NonDevDeviceException();
+      //throw new NonDevDeviceException();
+      log.warning("Non dev device.");
     }
   }
 
