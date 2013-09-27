@@ -45,9 +45,9 @@ public class IMobileDeviceFactory {
     unpack("libimobiledevice.dylib", out);
     unpack("libplist.dylib", out);
     unpack("libssl.1.0.0.dylib", out);
-    unpack("libusbmuxd.2.dylib", out);
+    unpack("libusbmuxd.dylib", out);
     unpack("libz.1.dylib", out);
-    unpack("libxml2.2.dylib", out);
+    unpack("libxml2.dylib", out);
 //    unpack("liblzma.5.dylib", out);
 //    unpack("libiconv.2.dylib", out);
     System.out.println("all unpack in " + out.getAbsolutePath());

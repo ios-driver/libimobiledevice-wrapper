@@ -6,9 +6,10 @@ import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.instruments.Counter;
 import org.libimobiledevice.ios.driver.binding.sdk.IDeviceSDK;
 import org.libimobiledevice.ios.driver.binding.sdk.InstrumentsService;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
+import static org.libimobiledevice.ios.driver.test.ConnectedDevices.*;
 
 
 public class InstrumentsTest {
@@ -16,23 +17,20 @@ public class InstrumentsTest {
 
   @Test(groups = "smoke")
   public void deviceCanRunInstruments() throws InterruptedException, LibImobileException {
-//    IOSDevice device = IMobileDeviceFactory.get(main);
-//
-//    InstrumentsService instruments = new InstrumentsService(device, "com.yourcompany.UICatalog");
-//
-//    Counter c = Counter.INSTANCE;
-//
-//
-//    for(int i=0;i<10;i++){
-//    Thread.sleep(200);
-//      c.start();
-//      instruments.executeScriptNonManaged("UIALogger.logMessage('Hello World!');");
-//    }
-//
-//
-//
-//    instruments.stopApp();
-//    device.disconnect();
+    IDeviceSDK d = new IDeviceSDK(main);
+
+    InstrumentsService instruments = new InstrumentsService(d, "com.ebay.iphone",null);
+
+    Counter c = Counter.INSTANCE;
+
+
+    for(int i=0;i<10;i++){
+    Thread.sleep(200);
+      c.start();
+      instruments.executeScriptNonManaged("UIALogger.logMessage('Hello World!');");
+    }
+
+    instruments.stopApp();
   }
 //
 //
@@ -186,28 +184,36 @@ public class InstrumentsTest {
 //  }
 //
 //
-//  @DataProvider(name = "createDataSafari", parallel = true)
-//  public Object[][] createDataSafari() {
-//    return new Object[][]{
-//        {main},
-//        //{device2},
-//        //{device3},
-//    };
-//  }
-//
-//
-//  @Test(dataProvider = "createDataSafari", invocationCount = 1)
-//  public void safariParallel(String uuid) throws InterruptedException {
-//    final IOSDevice device = factory.get(uuid);
-//    device.connect();
-//
-//    long start = System.currentTimeMillis();
-//    ScriptMessageHandler h = new DefaultScriptMessageHandler();
-//    InstrumentsService instruments = new InstrumentsService(device, h);
-//    instruments.startApp("com.apple.mobilesafari");
-//
-//    System.out.println((System.currentTimeMillis() - start) + "ms.\tsafari up for " + uuid);
-//    instruments.stopApp();
-//    device.disconnect();
-//  }
+  @DataProvider(name = "createDataSafari", parallel = true)
+  public Object[][] createDataSafari() {
+    return new Object[][]{
+       // {main},
+        {device2},
+      };
+  }
+
+
+
+  @Test(dataProvider = "createDataSafari", invocationCount = 1)
+  public void safariParallel(String uuid) throws InterruptedException {
+
+    IDeviceSDK d;
+
+    synchronized (this) {
+      d = new IDeviceSDK(uuid);
+    }
+
+    InstrumentsService instruments = new InstrumentsService(d, "com.apple.mobilesafari",null);
+
+    Counter c = Counter.INSTANCE;
+
+
+    for(int i=0;i<10;i++){
+      Thread.sleep(200);
+      c.start();
+      instruments.executeScriptNonManaged("UIALogger.logMessage('Hello World!');");
+    }
+
+    instruments.stopApp();
+  }
 }
