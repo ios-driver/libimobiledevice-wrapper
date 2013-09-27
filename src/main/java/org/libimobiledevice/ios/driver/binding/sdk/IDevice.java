@@ -22,20 +22,29 @@ import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary;
 
 public class IDevice {
 
+  private static final Object lock = new Object();
   protected final ImobiledeviceInstrumentsLibrary.idevice_t handle;
+  private final String uuid;
 
   protected IDevice() throws IllegalAccessException {
     throw new IllegalAccessException();
   }
 
   public IDevice(String uuid) throws LibImobileException {
-    PointerByReference ptr = new PointerByReference();
-    LibImobileException.throwIfNeeded(ImobiledeviceLibrary.idevice_new(ptr, uuid));
-    handle = new ImobiledeviceInstrumentsLibrary.idevice_t(ptr.getValue());
+    this.uuid = uuid;
+    synchronized (lock) {
+      PointerByReference ptr = new PointerByReference();
+      LibImobileException.throwIfNeeded(ImobiledeviceLibrary.idevice_new(ptr, uuid));
+      handle = new ImobiledeviceInstrumentsLibrary.idevice_t(ptr.getValue());
+    }
   }
 
   public void release() throws LibImobileException {
     LibImobileException.throwIfNeeded(ImobiledeviceLibrary.idevice_free(handle));
 
+  }
+
+  public String getUUID() {
+    return uuid;
   }
 }

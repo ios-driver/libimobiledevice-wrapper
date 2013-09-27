@@ -18,7 +18,6 @@ import com.sun.jna.ptr.PointerByReference;
 
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceInstrumentsLibrary;
-import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary;
 import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary;
 
 import java.nio.IntBuffer;
@@ -48,7 +47,6 @@ public class IDeviceSDK extends IDevice {
   ImobiledeviceInstrumentsLibrary.idevice_t getHandleIdevice() {
     return handle;
   }
-
 
   public boolean isDeveloperMode() {
     IntBuffer enabled = IntBuffer.allocate(1);
