@@ -14,78 +14,8 @@
 
 package org.libimobiledevice.ios.driver.binding;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
+public interface InstallerCallback {
 
-import org.libimobiledevice.ios.driver.binding.installer.Installer;
-
-import java.nio.LongBuffer;
-
-public class InstallerCallback /*implements IMobileDeviceService.install_status_cb */{
-
-//  private final IMobileDeviceService lib = IMobileDeviceService.INSTANCE;
-//  private final Installer installer;
-//
-//  public InstallerCallback(Installer installer) {
-//    this.installer = installer;
-//  }
-//
-//
-//  @Override
-//  public void apply(Pointer operation, Pointer status, Pointer idvoid) {
-//    //lib.status_cb_c(operation.getString(0), status, idvoid, new Logger("todo"));
-//    event_t event = installer.event;
-//    //System.out.println(event);
-//    if (status != null && operation != null) {
-//      //printf("INSIDE status_cb_c with status\n");
-//      Pointer npercent = lib.plist_dict_get_item(status, "PercentComplete");
-//      Pointer nstatus = lib.plist_dict_get_item(status, "Status");
-//      Pointer nerror = lib.plist_dict_get_item(status, "Error");
-//      long percent = 0;
-//      String status_msg = null;
-//      if (npercent!= null) {
-//        LongBuffer val = LongBuffer.allocate(1);
-//        lib.plist_get_uint_val(npercent, val);
-//        percent = val.get(0);
-//      }
-//      if (nstatus != null) {
-//        PointerByReference ptr = new PointerByReference();
-//        lib.plist_get_string_val(nstatus, ptr);
-//        status_msg = ptr.getValue().getString(0);
-//        if ("Complete".equals(status_msg)) {
-//          event.op_completed = 1;
-//        }
-//      }
-//      if (nerror == null) {
-//        //System.out.println(status_msg);
-//        if (npercent == null) {
-//          System.out.println("op:"+operation.getString(0)+", "+status_msg);
-//          //logger(id);
-//          //logger(operation);
-//          //logger(status_msg);
-//        } else {
-//          System.out.println("op:"+operation.getString(0)+", "+status_msg+" , % :"+percent);
-//          //printf( "%s;%s;%s;%d%%\n", event->uuid, operation, status_msg, percent);
-//          //logger(id);
-//          //logger(operation);
-//          //logger(status_msg);
-//          //logger("more %");
-//        }
-//      } else {
-//        String err_msg = null;
-//        PointerByReference ptr = new PointerByReference();
-//        lib.plist_get_string_val(nerror, ptr);
-//        err_msg = ptr.getValue().getString(0);
-//        //printf("%s;%s;Error occured: %s", event->uuid, operation, err_msg);
-//        //free(err_msg);
-//        System.out.println("error :" + err_msg);
-//        event.err_occured = 1;
-//      }
-//
-//
-//    } else {
-//      System.out.println("called with wrong data ?");
-//    }
-//  }
+  public void onMessage(String op, int percent, String msg);
 
 }

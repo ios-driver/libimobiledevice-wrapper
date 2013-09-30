@@ -18,6 +18,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
 import org.libimobiledevice.ios.driver.binding.ApplicationInfo;
+import org.libimobiledevice.ios.driver.binding.InstallerCallback;
 import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary;
 
 import java.io.File;
@@ -46,19 +47,43 @@ public class InstallerService {
     return infos;
   }
 
-  public void install(File ipa) {
-    ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t callback =
-        new ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t() {
-          @Override
-          public void apply(Pointer operation, Pointer message, int precent_complete,
-                            Pointer user_data) {
-            System.out.println(operation.getString(0) + precent_complete + "%");
-            System.out.println(message.getString(0));
+  public void install(File ipa, final InstallerCallback cb) {
+    final ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t callback;
+
+    if (cb == null) {
+      System.out.println("callback was null. Using default.");
+      callback = new ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t() {
+        @Override
+        public void apply(Pointer operation, Pointer message, int precent_complete,
+                          Pointer user_data) {
+          System.out.println(operation.getString(0) + precent_complete + "%");
+          System.out.println(message.getString(0));
+        }
+      };
+    } else {
+      callback = new ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t() {
+
+        @Override
+        public void apply(Pointer operation, Pointer message, int precent_complete,
+                          Pointer user_data) {
+          try {
+            String op = operation.getString(0);
+            int percent = precent_complete;
+            String msg = message.getString(0);
+            cb.onMessage(op,percent,msg);
+          } catch (Exception e) {
+            System.err.println("CB ERROR " + e.getMessage());
           }
-        };
+        }
+      };
+    }
     ImobiledeviceSdkLibrary
         .installation_service_install_application_from_archive_with_callback(service,
                                                                              ipa.getAbsolutePath(),
                                                                              callback, null);
   }
-}
+
+  public void uninstall(String bundleId) {
+    ImobiledeviceSdkLibrary.installation_service_uninstall_application(service, bundleId);
+  }
+  }
