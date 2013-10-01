@@ -33,25 +33,39 @@ public class InstallTest {
     IDeviceSDK d = new IDeviceSDK(main);
     InstallerService service = new InstallerService(d);
     SysLogService s2 = new SysLogService(d);
-    s2.start();
-    service.install(new File("/Users/freynaud/out/com.yourcompany.UICatalog.ipa"));
+    //s2.start();
+    final InstallerCallback cb = new InstallerCallback() {
+      @Override
+      public void onMessage(String op, int percent, String msg) {
+        System.out.println(op + percent + msg);
+      }
+    };
+
+    File ui = new File("/Users/freynaud/out/com.yourcompany.UICatalog.ipa");
+    File eBay = new File("/Users/freynaud/tmp/com.ebay.iphone.ipa");
+
+    service.install(eBay, cb);
+
+//    service.install(new File("/Users/freynaud/Downloads/ebay_iphone_enterprise_3.2.0a1_build6.ipa"));
+    //service.install(new File("/Users/freynaud/com.ebay.iphone_3.2_ios7.ipa"));
+
 //    service.install(new File("/Users/freynaud/Documents/tmp/ebay_iphone_enterprise_3.1.0a1_build12.ipa"));
 //  device.install(new File("/Users/freynaud/out/com.yourcompany.UICatalog.ipa"));
     //device.install(new File("/Users/freynaud/imobile/workspace/eBay.ipa"));
     //device.install(new File("/Users/freynaud/Documents/tmp/ebay_iphone_enterprise_3.1.0a1_build12.ipa"));
     //device.install(new File("/Users/freynaud/Documents/tmp/Payload.ipa"));
+
 //    device.disconnect();
   }
-
 
   @Test
   public void canListApplications() throws LibImobileException {
     IDeviceSDK d = new IDeviceSDK(main);
     InstallerService service = new InstallerService(d);
-    List<ApplicationInfo> infos = service.listApplications();
-    System.out.println(infos);
+    System.out.println(service.listApplications());
   }
-//
+
+  //
 //  @Test
 //  public void deviceCanDetectErrorsInstall() throws InterruptedException {
 //    IOSDevice device = factory.get(main);
@@ -61,13 +75,14 @@ public class InstallTest {
 //  }
 //
 //
-//  @Test(dependsOnMethods = "deviceCanInstall")
-//  public void deviceCanUninstall() {
-//    IOSDevice device = factory.get(device2);
-//    device.connect();
-//    device.uninstall("com.yourcompany.InternationalMountains");
-//    device.disconnect();
-//  }
+  @Test(dependsOnMethods = "deviceCanInstall")
+  public void deviceCanUninstall() {
+    IDeviceSDK d = new IDeviceSDK(device2);
+    InstallerService service = new InstallerService(d);
+    //service.uninstall("com.ebay.iphone");
+    service.uninstall("com.yourcompany.UICatalog");
+
+  }
 //
 //  @Test
 //  public void test() {
