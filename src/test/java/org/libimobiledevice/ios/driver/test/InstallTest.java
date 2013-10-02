@@ -1,6 +1,6 @@
 package org.libimobiledevice.ios.driver.test;
 
-import org.libimobiledevice.ios.driver.binding.InstallerCallback;
+import org.libimobiledevice.ios.driver.binding.ApplicationInfo;
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.sdk.IDeviceSDK;
 import org.libimobiledevice.ios.driver.binding.sdk.InstallerService;
@@ -8,8 +8,9 @@ import org.libimobiledevice.ios.driver.binding.sdk.SysLogService;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.util.List;
 
-import static org.libimobiledevice.ios.driver.test.ConnectedDevices.device2;
+import static org.libimobiledevice.ios.driver.test.ConnectedDevices.fviscomi;
 import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
 
 public class InstallTest {
@@ -34,7 +35,7 @@ public class InstallTest {
     InstallerService service = new InstallerService(d);
     SysLogService s2 = new SysLogService(d);
     s2.start();
-    service.install(new File("/Users/freynaud/out/com.yourcompany.UICatalog.ipa"));
+    service.install(new File("/Users/freynaud/out/com.yourcompany.UICatalog.ipa"), null);
 //    service.install(new File("/Users/freynaud/Documents/tmp/ebay_iphone_enterprise_3.1.0a1_build12.ipa"));
 //  device.install(new File("/Users/freynaud/out/com.yourcompany.UICatalog.ipa"));
     //device.install(new File("/Users/freynaud/imobile/workspace/eBay.ipa"));
