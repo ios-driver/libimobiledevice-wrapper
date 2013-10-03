@@ -17,7 +17,6 @@ package org.libimobiledevice.ios.driver.binding.sdk;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
-
 import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceInstrumentsLibrary;
 import org.libimobiledevice.ios.driver.binding.raw.PlistLibrary;
 
@@ -25,12 +24,14 @@ import java.nio.IntBuffer;
 
 public class InstrumentsService {
 
+  private static final Object lock = new Object();
   private final IDeviceSDK device;
   private final ImobiledeviceInstrumentsLibrary.instruments_client_t instruments_client;
   private final ImobiledeviceInstrumentsLibrary.uiautomation_client_t automation_client;
   private final ImobiledeviceInstrumentsLibrary.processcontrol_client_t process_control_client;
 
-  private final Handler msgHandler = new Handler();
+  //private final Handler msgHandler = new Handler();
+  private final UIAScriptMessageHandler handler = new UIAScriptMessageHandler();
   private final
   ImobiledeviceInstrumentsLibrary.uiautomation_exception_handler_t
       exHandler =
@@ -53,11 +54,22 @@ public class InstrumentsService {
       };
     }
 
-    msgHandler.setCallback(handler);
+    //msgHandler.setCallback(handler);
     // TODO freynaud
+
     PointerByReference ptr = new PointerByReference();
-    ImobiledeviceInstrumentsLibrary
-        .instruments_client_start_service(device.getHandleIdevice(), ptr, "libimobile-java");
+    int code = 0;
+    do {
+
+
+      code = ImobiledeviceInstrumentsLibrary
+          .instruments_client_start_service(device.getHandleIdevice(), ptr, "libimobile-java");
+      if (code != 0) {
+        System.err.println("Cannot start instruments_client_start_service : "+code);
+      }
+      sleepWell(500);
+    } while (code != 0);
+
     instruments_client = new ImobiledeviceInstrumentsLibrary.instruments_client_t(ptr.getValue());
 
     PointerByReference ptr2 = new PointerByReference();
@@ -71,11 +83,16 @@ public class InstrumentsService {
     process_control_client =
         new ImobiledeviceInstrumentsLibrary.processcontrol_client_t(ptr3.getValue());
 
-    ImobiledeviceInstrumentsLibrary
-        .uiautomation_client_set_message_handler(automation_client, msgHandler);
-    ImobiledeviceInstrumentsLibrary
-        .uiautomation_client_set_exception_handler(automation_client,
-                                                   exHandler);
+    synchronized (lock) {
+      System.out.println("Set handler.");
+      ImobiledeviceInstrumentsLibrary
+          .uiautomation_client_set_message_handler(automation_client, this.handler);
+      sleepWell(1000);
+      ImobiledeviceInstrumentsLibrary
+          .uiautomation_client_set_exception_handler(automation_client,
+                                                     exHandler);
+      sleepWell(1000);
+    }
 
     IntBuffer pid_ptr = IntBuffer.allocate(1);
     ImobiledeviceInstrumentsLibrary
@@ -119,59 +136,14 @@ public class InstrumentsService {
     }
   }
 
-
-  class Handler implements ImobiledeviceInstrumentsLibrary.uiautomation_message_handler_t {
-
-    private MessageHandler h;
-
-    @Override
-    public int apply(Pointer client, Pointer message) {
-      PointerByReference xml_ptr = new PointerByReference();
-      IntBuffer buff = IntBuffer.allocate(1);
-      PlistLibrary.plist_to_xml(message, xml_ptr, buff);
-      String msg = xml_ptr.getValue().getString(0);
-      h.handle(msg);
-      //System.err.println(System.currentTimeMillis()+" -- ");
-      //Counter.INSTANCE.lap();
-      //ImobiledeviceSdkLibrary.sdk_idevice_free_string(xml_ptr.getPointer());
-      return 1;
-    }
-
-    public void setCallback(MessageHandler h) {
-      this.h = h;
+  private void sleepWell(long ms) {
+    try {
+      Thread.sleep(ms);
+    } catch (InterruptedException e) {
+      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
     }
   }
 
-  class HandlerEx implements ImobiledeviceInstrumentsLibrary.uiautomation_exception_handler_t {
-
-
-    @Override
-    public int apply(Pointer client, Pointer message, int line, Pointer source) {
-      return 0;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-  }
-
-
-  /**
-   * executes a script on the device. Doesn't wait for the script to return, and will crash if you
-   * send a script before the previous one has returned.
-   */
-  public void executeScriptNonManaged(String script) {
-    String safe = "try{ " + script + ""
-                  + "} catch (err){"
-                  + "UIALogger.logMessage('there was an error.'+err.message);"
-                  //+ "throw err;"
-                  + "}";
-    // + "UIALogger.logMessage('instruments_scriptCompleted "+id +"');";
-    //callback.setBusy(true);
-
-    ImobiledeviceInstrumentsLibrary
-        .uiautomation_client_start_script_with_info(automation_client,
-                                                    this.bundleId, safe,
-                                                    "ios-driver");
-
-    //callback.waitForScript();
-  }
 
   //
 //  public void startApp(String bundleId) {
@@ -197,9 +169,89 @@ public class InstrumentsService {
 //    }*/
 //  }
 //
+
+
+  class Handler implements ImobiledeviceInstrumentsLibrary.uiautomation_message_handler_t {
+
+    private MessageHandler h;
+
+    @Override
+    public int apply(Pointer client, Pointer message) {
+      PointerByReference xml_ptr = new PointerByReference();
+      IntBuffer buff = IntBuffer.allocate(1);
+      PlistLibrary.plist_to_xml(message, xml_ptr, buff);
+      String msg = xml_ptr.getValue().getString(0);
+      System.out.println(msg);
+      h.handle(msg);
+      //System.err.println(System.currentTimeMillis()+" -- ");
+      //Counter.INSTANCE.lap();
+      //ImobiledeviceSdkLibrary.sdk_idevice_free_string(xml_ptr.getPointer());
+      return 1;
+    }
+
+    public void setCallback(MessageHandler h) {
+      this.h = h;
+    }
+  }
+
+  /**
+   * executes a script on the device. Doesn't wait for the script to return, and will crash if you
+   * send a script before the previous one has returned.
+   */
+  public void executeScriptNonManaged(String script) {
+    String safe = "try{ " + script + ""
+                  + "} catch (err){"
+                  + "UIALogger.logMessage('there was an error.'+err.message);"
+                  //+ "throw err;"
+                  + "}";
+    // + "UIALogger.logMessage('instruments_scriptCompleted "+id +"');";
+    //callback.setBusy(true);
+
+    ImobiledeviceInstrumentsLibrary
+        .uiautomation_client_start_script_with_info(automation_client,
+                                                    this.bundleId, safe,
+                                                    "ios-driver");
+
+    //callback.waitForScript();
+  }
+
+
+
+  class HandlerEx implements ImobiledeviceInstrumentsLibrary.uiautomation_exception_handler_t {
+
+
+    @Override
+    public int apply(Pointer client, Pointer message, int line, Pointer source) {
+      return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+  }  //  //  public void startApp(String bundleId) {
+
+  //    state = new instruments_state_t();
+//    state.bundleIdentifier = bundleId;
+//    if ("com.apple.mobilesafari".equals(bundleId)) {
+//      state.wait_for_agent = 0;
+//    }
+//
+//    callback = new InstrumentsCallbackImpl(state, handler);
+//    client = device.lockdownd();
+//    PointerByReference args = new PointerByReference();
+//    PointerByReference envt = new PointerByReference();
+//    lib.instruments_start(device.getHandle(), client, state, envt, args, l, callback);
+//    /*while (state.agent_is_ready == 0) {
+//      System.out.println("waiting ...");
+//      try {
+//        Thread.sleep(1000);
+//      } catch (InterruptedException e) {
+//        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//      }
+//
+//    }*/
+//  }
+//
   public void stopApp() {
     ImobiledeviceInstrumentsLibrary.processcontrol_client_kill_pid(process_control_client, pid);
-    ImobiledeviceInstrumentsLibrary.processcontrol_client_stop_observing_pid(process_control_client, pid);
+    ImobiledeviceInstrumentsLibrary
+        .processcontrol_client_stop_observing_pid(process_control_client, pid);
     ImobiledeviceInstrumentsLibrary.processcontrol_client_free(process_control_client);
     ImobiledeviceInstrumentsLibrary.uiautomation_client_free(automation_client);
     ImobiledeviceInstrumentsLibrary.instruments_client_free(instruments_client);

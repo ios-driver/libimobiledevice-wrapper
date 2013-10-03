@@ -26,12 +26,17 @@ import java.util.List;
 
 public class InstallerService {
 
+  private static final Object lock = new Object();
   private final ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service;
 
   public InstallerService(IDeviceSDK d) {
-    PointerByReference ptr = new PointerByReference();
-    ImobiledeviceSdkLibrary.installation_service_new(d.getHandle(), ptr);
-    service = new ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t(ptr.getValue());
+    synchronized (lock) {
+      System.out.println("creating service");
+      PointerByReference ptr = new PointerByReference();
+      ImobiledeviceSdkLibrary.installation_service_new(d.getHandle(), ptr);
+      service = new ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t(ptr.getValue());
+      System.out.println("service created");
+    }
   }
 
   public List<ApplicationInfo> listApplications() {
@@ -48,6 +53,7 @@ public class InstallerService {
   }
 
   public void install(File ipa, final InstallerCallback cb) {
+    System.out.println("starting install");
     final ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t callback;
 
     if (cb == null) {
@@ -70,7 +76,7 @@ public class InstallerService {
             String op = operation.getString(0);
             int percent = precent_complete;
             String msg = message.getString(0);
-            cb.onMessage(op,percent,msg);
+            cb.onMessage(op, percent, msg);
           } catch (Exception e) {
             System.err.println("CB ERROR " + e.getMessage());
           }
@@ -86,4 +92,4 @@ public class InstallerService {
   public void uninstall(String bundleId) {
     ImobiledeviceSdkLibrary.installation_service_uninstall_application(service, bundleId);
   }
-  }
+}

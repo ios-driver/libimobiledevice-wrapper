@@ -70,6 +70,7 @@ public class IDeviceSDK extends IDevice {
 
   public void release() {
     ImobiledeviceSdkLibrary.sdk_idevice_free(sdk_handle);
+    //super.release();
   }
 
 
