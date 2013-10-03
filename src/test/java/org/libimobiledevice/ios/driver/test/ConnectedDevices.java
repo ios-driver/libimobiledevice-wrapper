@@ -41,5 +41,6 @@ public class ConnectedDevices {
   public static String main = ConnectedDevices.freynaud;
   public static String device2 = ConnectedDevices.ipodId;
   public static String device3 = ConnectedDevices.ebayId4_b;
+  public static String fviscomi = "44c3bfb9370299ffc063a2b1c6a689c02a2d6c7f";
 
 }
