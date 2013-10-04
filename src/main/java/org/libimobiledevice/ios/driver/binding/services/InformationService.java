@@ -14,11 +14,19 @@
 
 package org.libimobiledevice.ios.driver.binding.services;
 
+import com.dd.plist.NSNumber;
+import com.dd.plist.XMLPropertyListParser;
 import com.sun.jna.ptr.PointerByReference;
 
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 
 import java.nio.IntBuffer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.libimobiledevice.ios.driver.binding.exceptions.SDKErrorCode.throwIfNeeded;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.information_service_free;
@@ -45,6 +53,13 @@ public class InformationService {
     PointerByReference ptr = new PointerByReference();
     throwIfNeeded(information_service_new(device.getSDKHandle(), ptr));
     sdk_idevice_information_service_t = new sdk_idevice_information_service_t(ptr.getValue());
+  }
+
+  public static void main(String[] args) throws ParseException {
+    String s = Calendar.getInstance().get(Calendar.YEAR) + " Oct  4 23:57:25";
+    SimpleDateFormat parser = new SimpleDateFormat("yyyy MMM d HH:mm:ss");
+    Date d = parser.parse(s);
+    System.out.println(d);
   }
 
   public boolean isDevModeEnabled() throws SDKException {
@@ -79,8 +94,24 @@ public class InformationService {
     return getValue(ptr);
   }
 
-  public void setLanguage(String language) throws SDKException {
+  public void setLanguage(String language) throws SDKException, InterruptedException {
+    String current = getLanguage();
+    if (language.equals(current)) {
+      return;
+    }
+    Date now = getDate();
+    IsRestartedListener listener = new IsRestartedListener(now);
+
+    device.getSysLogService().addListener(listener);
     throwIfNeeded(information_service_set_language(sdk_idevice_information_service_t, language));
+
+    long deadline = System.currentTimeMillis() + 20000;
+    while (!listener.isDone()) {
+      Thread.sleep(500);
+      if (System.currentTimeMillis() > deadline) {
+        System.out.println("didn't find a clue in " + listener.toString());
+      }
+    }
   }
 
   public String getLocale() throws SDKException {
@@ -90,11 +121,6 @@ public class InformationService {
   }
 
   public void setLocale(String locale) throws SDKException {
-    String current = getLocale();
-    if (locale.equals(current)){
-      return;
-    }
-
     throwIfNeeded(information_service_set_locale(sdk_idevice_information_service_t, locale));
   }
 
@@ -111,6 +137,22 @@ public class InformationService {
     return getValue(ptr);
   }
 
+  public Date getDate() throws SDKException {
+    PointerByReference ptr = new PointerByReference();
+    throwIfNeeded(
+        information_service_get_value_as_xml(sdk_idevice_information_service_t, null,
+                                             "TimeIntervalSince1970", ptr));
+    String xml = getValue(ptr);
+    try {
+      NSNumber time = (NSNumber) XMLPropertyListParser.parse(xml.getBytes("UTF-8"));
+      long ts = (long) (time.doubleValue() * 1000);
+      return new Date(ts);
+    } catch (Exception e) {
+      throw new SDKException("Cannot parse response = " + xml + " ->" + e.getMessage());
+    }
+
+  }
+
   private String getValue(PointerByReference ptr) throws SDKException {
     if (ptr == null) {
       throw new SDKException("Bug ? pointer should have been assigned by the info_service");
@@ -125,4 +167,66 @@ public class InformationService {
   public void free() throws SDKException {
     throwIfNeeded(information_service_free(sdk_idevice_information_service_t));
   }
+
+  private static class IsRestartedListener implements SysLogListener {
+
+    private final List<String> lines = new CopyOnWriteArrayList<String>();
+    private final Date after;
+    private StringBuffer buff = new StringBuffer();
+    private volatile boolean isDone = false;
+
+    IsRestartedListener(Date after) {
+      this.after = after;
+    }
+
+    @Override
+    public void onCharacter(char c) {
+      if (c == '\n') {
+        String line = buff.toString();
+        lines.add(line);
+        if (line.contains("SIMToolkit plugin for SpringBoard initialized")) {
+          boolean a = false;
+          try {
+            a = isAfter(line, after);
+          } catch (ParseException e) {
+            System.err.println("Cannot parse the date in line " + line);
+          }
+          if (a) {
+            isDone = true;
+          }
+        }
+        buff = new StringBuffer();
+      } else {
+        buff.append(c);
+      }
+    }
+
+    private boolean isAfter(String line, Date after) throws ParseException {
+      Date d = extractDate(line);
+      boolean a = d.after(after);
+      return a;
+    }
+
+    private Date extractDate(String line) throws ParseException {
+      String d = Calendar.getInstance().get(Calendar.YEAR) + " " + line.substring(0, 15);
+      SimpleDateFormat parser = new SimpleDateFormat("yyyy MMM d HH:mm:ss");
+      return parser.parse(d);
+    }
+
+    /**
+     * look for the magic string after this given time (the device buffers the last logs, so if you
+     * change the language plenty of time in a row, you risk to get the logs from the previous
+     * changes
+     */
+    private boolean isDone() {
+      return isDone;
+    }
+
+    @Override
+    public String toString() {
+      return buff.toString();
+    }
+  }
+
+
 }

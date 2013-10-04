@@ -30,7 +30,8 @@ public class IDeviceNewThreadTest {
   }
 
   @Test(dataProvider = "devices")
-  public void deviceCanSetLocale(String uuid) throws LibImobileException, SDKException {
+  public void deviceCanSetLocale(String uuid)
+      throws LibImobileException, SDKException, InterruptedException {
     InformationService service = new InformationService(DeviceService.get(uuid));
     service.setLanguage("en");
     service.setLanguage("en_US");

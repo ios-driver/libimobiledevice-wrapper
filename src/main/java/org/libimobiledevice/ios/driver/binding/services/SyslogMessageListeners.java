@@ -28,7 +28,7 @@ public class SyslogMessageListeners implements sdk_idevice_syslog_service_read_c
   @Override
   public void apply(byte c, Pointer user_data) {
     for (SysLogListener h : all) {
-      h.onCharacter((char) c);
+        h.onCharacter((char) c);
     }
   }
 

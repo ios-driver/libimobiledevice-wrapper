@@ -23,12 +23,18 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.util.Date;
+
 import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
 
 // TODO freynaud create a proprty file with expected values.
 public class InformationServiceTest {
 
   private InformationService service;
+
+  public static void main(String[] args) {
+    System.out.println(new Date(1380923274951L));
+  }
 
   @BeforeClass
   public void setup() throws LibImobileException, SDKException {
@@ -100,13 +106,22 @@ public class InformationServiceTest {
   }
 
   @Test
-  public void serviceCanSetLanguage() throws LibImobileException, SDKException {
-    service.setLanguage("en");
+  public void serviceCanSetLanguage() throws LibImobileException, SDKException,
+                                             InterruptedException {
+    service.setLanguage("fr");
   }
 
   @Test
   public void serviceCanGetDeviceEnabled() throws LibImobileException, SDKException {
     boolean isDev = service.isDevModeEnabled();
     System.out.println("dev mode :" + isDev);
+  }
+
+  @Test
+  public void getTime() throws SDKException, InterruptedException {
+    for (int i = 0; i < 10; i++) {
+      Thread.sleep(1000);
+      System.out.println(service.getDate());
+    }
   }
 }
