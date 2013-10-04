@@ -1,15 +1,16 @@
 package org.libimobiledevice.ios.driver.test;
 
-import org.libimobiledevice.ios.driver.binding.InstallerCallback;
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
-import org.libimobiledevice.ios.driver.binding.sdk.IDeviceSDK;
-import org.libimobiledevice.ios.driver.binding.sdk.InstallerService;
-import org.libimobiledevice.ios.driver.binding.sdk.SysLogService;
+import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
+import org.libimobiledevice.ios.driver.binding.services.DeviceService;
+import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
+import org.libimobiledevice.ios.driver.binding.services.InstallCallback;
+import org.libimobiledevice.ios.driver.binding.services.InstallerService;
+import org.libimobiledevice.ios.driver.binding.services.SysLogService;
 import org.testng.annotations.Test;
 
 import java.io.File;
 
-import static org.libimobiledevice.ios.driver.test.ConnectedDevices.device2;
 import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
 
 public class InstallTest {
@@ -21,7 +22,7 @@ public class InstallTest {
 //  final File uicatalogVerifFailed = new File(base, "com.yourcompany.UICatalog.ipa");
 //  final File uicatalog = new File("/Users/freynaud/out/com.yourcompany.UICatalog.ipa");
 //
-//  private IMobileDeviceFactory factory = IMobileDeviceFactory.INSTANCE;
+//  private LibImobileDeviceWrapperFactory factory = LibImobileDeviceWrapperFactory.INSTANCE;
 //
 //  @Test(groups = "smoke")
 //  public void a() {
@@ -29,23 +30,24 @@ public class InstallTest {
 //  }
 //
   @Test(groups = "smoke")
-  public void deviceCanInstall() throws InterruptedException, LibImobileException {
-    IDeviceSDK d = new IDeviceSDK(main);
+  public void deviceCanInstall() throws LibImobileException, SDKException {
+    IOSDevice d = DeviceService.get(main);
     InstallerService service = new InstallerService(d);
     SysLogService s2 = new SysLogService(d);
     //s2.start();
-    final InstallerCallback cb = new InstallerCallback() {
+
+    final InstallCallback cb = new InstallCallback() {
       @Override
-      public void onMessage(String op, int percent, String msg) {
-        System.out.println(op + percent + msg);
+      protected void onUpdate(String operation, int percent, String message) {
+        sout(operation, percent, message);
       }
     };
-
     File ui = new File("/Users/freynaud/out/com.yourcompany.UICatalog.ipa");
     File eBay = new File("/Users/freynaud/tmp/com.ebay.iphone.ipa");
 
     service.install(eBay, cb);
 
+    service.free();
 //    service.install(new File("/Users/freynaud/Downloads/ebay_iphone_enterprise_3.2.0a1_build6.ipa"));
     //service.install(new File("/Users/freynaud/com.ebay.iphone_3.2_ios7.ipa"));
 
@@ -59,10 +61,11 @@ public class InstallTest {
   }
 
   @Test
-  public void canListApplications() throws LibImobileException {
-    IDeviceSDK d = new IDeviceSDK(main);
+  public void canListApplications() throws LibImobileException, SDKException {
+    IOSDevice d = DeviceService.get(main);
     InstallerService service = new InstallerService(d);
     System.out.println(service.listApplications());
+    service.free();
   }
 
   //
@@ -76,12 +79,12 @@ public class InstallTest {
 //
 //
   @Test(dependsOnMethods = "deviceCanInstall")
-  public void deviceCanUninstall() {
-    IDeviceSDK d = new IDeviceSDK(device2);
+  public void deviceCanUninstall() throws SDKException, LibImobileException {
+    IOSDevice d = DeviceService.get(main);
     InstallerService service = new InstallerService(d);
     //service.uninstall("com.ebay.iphone");
     service.uninstall("com.yourcompany.UICatalog");
-
+    service.free();
   }
 //
 //  @Test

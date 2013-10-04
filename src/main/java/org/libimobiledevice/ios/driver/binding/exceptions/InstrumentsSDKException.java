@@ -14,9 +14,24 @@
 
 package org.libimobiledevice.ios.driver.binding.exceptions;
 
-public class NonDevDeviceException extends LibImobileException {
+public class InstrumentsSDKException extends libImobileDeviceWrapperException {
 
-  public NonDevDeviceException() {
+  private final InstrumentsErrorCode code;
 
+  public InstrumentsSDKException(int code) {
+    for (InstrumentsErrorCode error : InstrumentsErrorCode.values()) {
+      if (code == error.getCode()) {
+        this.code = error;
+        return;
+      }
+    }
+    System.err
+        .println("Cannot find the returned error code for the instruments call.Assigning unknown.");
+    this.code = InstrumentsErrorCode.INSTRUMENTS_E_UNKNOWN_ERROR;
+  }
+
+  public InstrumentsSDKException(String message) {
+    super(message);
+    this.code = InstrumentsErrorCode.JAVA_ERROR;
   }
 }

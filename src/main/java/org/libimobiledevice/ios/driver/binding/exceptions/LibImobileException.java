@@ -14,29 +14,33 @@
 
 package org.libimobiledevice.ios.driver.binding.exceptions;
 
-import java.lang.RuntimeException;
-import java.lang.String;
-import java.lang.Throwable;
+public class LibImobileException extends libImobileDeviceWrapperException {
 
-public class LibImobileException extends RuntimeException {
+  private final ErrorCode code;
 
   public LibImobileException() {
+    code = ErrorCode.JAVA_ERROR;
   }
 
   public LibImobileException(String message, Throwable cause) {
     super(message, cause);
+    code = ErrorCode.JAVA_ERROR;
   }
 
   public LibImobileException(String message) {
     super(message);
+    code = ErrorCode.JAVA_ERROR;
   }
 
-  public static void throwIfNeeded(short returnCode) throws LibImobileException {
-    switch (returnCode) {
-      case 0:
+  public LibImobileException(int code) {
+    for (ErrorCode error : ErrorCode.values()) {
+      if (code == error.getCode()) {
+        this.code = error;
         return;
-      default:
-        throw new LibImobileException("unknown error code : " + returnCode);
+      }
     }
+    System.err.println(
+        "Cannot find the returned error code for the call.Assigning unknown.");
+    this.code = ErrorCode.JAVA_ERROR;
   }
 }

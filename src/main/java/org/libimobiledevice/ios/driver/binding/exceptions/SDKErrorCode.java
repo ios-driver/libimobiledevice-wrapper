@@ -12,21 +12,26 @@
  * the License.
  */
 
-package org.libimobiledevice.ios.driver.binding;
+package org.libimobiledevice.ios.driver.binding.exceptions;
 
-public enum LibImobileErrorCode {
+public enum SDKErrorCode {
 
-  IDEVICE_E_SUCCESS(0),
-  IDEVICE_E_INVALID_ARG(-1),
-  IDEVICE_E_UNKNOWN_ERROR(-2),
-  IDEVICE_E_NO_DEVICE(-3),
-  IDEVICE_E_NOT_ENOUGH_DATA(-4),
-  IDEVICE_E_BAD_HEADER(-5),
-  IDEVICE_E_SSL_ERROR(-6);
+  SDK_UNKNOWN_ERROR_CODE(-256);
+  private final int code;
 
-  private final int status_code;
+  private SDKErrorCode(int code) {
+    this.code = code;
+  }
 
-  LibImobileErrorCode(int status_code) {
-    this.status_code = status_code;
+  public static void throwIfNeeded(int code) throws SDKException {
+    if (code == 0) {
+      return;
+    } else {
+      throw new SDKException(code);
+    }
+  }
+
+  public int getCode() {
+    return code;
   }
 }

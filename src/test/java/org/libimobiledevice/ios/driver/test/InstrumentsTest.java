@@ -1,36 +1,22 @@
 package org.libimobiledevice.ios.driver.test;
 
+import org.libimobiledevice.ios.driver.binding.exceptions.InstrumentsSDKException;
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
-import org.libimobiledevice.ios.driver.binding.instruments.Counter;
-import org.libimobiledevice.ios.driver.binding.sdk.IDeviceSDK;
-import org.libimobiledevice.ios.driver.binding.sdk.instruments.InstrumentsService;
+import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
+import org.libimobiledevice.ios.driver.binding.services.DeviceService;
+import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
+import org.libimobiledevice.ios.driver.binding.services.InstrumentsService;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static org.libimobiledevice.ios.driver.test.ConnectedDevices.*;
+import static org.libimobiledevice.ios.driver.test.ConnectedDevices.device2;
+import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
 
 
 public class InstrumentsTest {
 
 
-  @Test(groups = "smoke")
-  public void deviceCanRunInstruments() throws InterruptedException, LibImobileException {
-    IDeviceSDK d = new IDeviceSDK(main);
-
-    InstrumentsService instruments = new InstrumentsService(d, "com.ebay.iphone",null);
-
-    Counter c = Counter.INSTANCE;
-
-
-    for(int i=0;i<10;i++){
-    Thread.sleep(200);
-      c.start();
-      instruments.executeScriptNonManaged("UIALogger.logMessage('Hello World!');");
-    }
-
-    instruments.stopApp();
-  }
-//
+  //
 //
 //  String
 //      s =
@@ -53,17 +39,19 @@ public class InstrumentsTest {
       + "var cmd  = UIATarget.localTarget().frontMostApp().preferencesValueForKey('cmd');\n"
       + "UIALogger.logMessage('cmd '+cmd);\n"
       + "};";
-
-  String s6="UIATarget.localTarget().frontMostApp().setPreferencesValueForKey( '/session', 'cmd');\n";
-  String s7="UIATarget.localTarget().frontMostApp().setPreferencesValueForKey( '/session2', 'cmd');\n";
-  String s8="UIATarget.localTarget().frontMostApp().setPreferencesValueForKey( '/session3', 'cmd');\n";
-
+  String
+      s6 =
+      "UIATarget.localTarget().frontMostApp().setPreferencesValueForKey( '/session', 'cmd');\n";
+  String
+      s7 =
+      "UIATarget.localTarget().frontMostApp().setPreferencesValueForKey( '/session2', 'cmd');\n";
+  String
+      s8 =
+      "UIATarget.localTarget().frontMostApp().setPreferencesValueForKey( '/session3', 'cmd');\n";
   String s4 = "UIATarget.localTarget().delay(5);\n"
               + "UIATarget.glob = 'Hell';\n"
               + "UIALogger.logMessage('after wait'+UIATarget.glob);";
   String s5 = "UIALogger.logMessage('direct'+UIATarget.glob);";
-
-
   String
       s2 =
       "var s = UIATarget.localTarget().frontMostApp().preferencesValueForKey('ios-driver');\n"
@@ -72,7 +60,23 @@ public class InstrumentsTest {
       + "}\n"
       + "s.cpt= s.cpt+1;\n"
       + "UIATarget.localTarget().frontMostApp().setPreferencesValueForKey( s, 'ios-driver');";
-//
+
+  @Test(groups = "smoke")
+  public void deviceCanRunInstruments()
+      throws InterruptedException, LibImobileException, SDKException, InstrumentsSDKException {
+
+    IOSDevice d = DeviceService.get(main);
+    InstrumentsService instruments = new InstrumentsService(d, "com.ebay.iphone");
+
+    for (int i = 0; i < 10; i++) {
+      Thread.sleep(200);
+      instruments.executeScriptNonManaged("UIALogger.logMessage('Hello World!');");
+    }
+
+    instruments.free();
+  }
+
+  //
 //  @Test(groups = "smoke")
 //  public void deviceCannotShareObjects() throws InterruptedException {
 //    final IOSDevice device = factory.get(main);
@@ -89,9 +93,10 @@ public class InstrumentsTest {
 //
 //
   @Test(groups = "smoke")
-  public void parallel() throws InterruptedException, LibImobileException {
-    IDeviceSDK d = new IDeviceSDK(main);
-    InstrumentsService service = new InstrumentsService(d,"com.yourcompany.UICatalog",null);
+  public void parallel()
+      throws InterruptedException, LibImobileException, SDKException, InstrumentsSDKException {
+    IOSDevice d = DeviceService.get(main);
+    InstrumentsService service = new InstrumentsService(d, "com.yourcompany.UICatalog");
 
     service.executeScriptNonManaged(s3);
     Thread.sleep(1000);
@@ -103,9 +108,10 @@ public class InstrumentsTest {
     Thread.sleep(10000);
 
     System.out.println("DONE\n\n\n");
-    service.stopApp();
+    service.free();
   }
-//
+
+  //
 //
 //  @Test(groups = "smoke")
 //  public void deviceCanRunInstrumentsNonManaged() throws InterruptedException {
@@ -185,33 +191,23 @@ public class InstrumentsTest {
   @DataProvider(name = "createDataSafari", parallel = true)
   public Object[][] createDataSafari() {
     return new Object[][]{
-       // {main},
+        // {main},
         {device2},
-      };
+    };
   }
 
-
-
   @Test(dataProvider = "createDataSafari", invocationCount = 1)
-  public void safariParallel(String uuid) throws InterruptedException {
+  public void safariParallel(String uuid)
+      throws InterruptedException, LibImobileException, SDKException, InstrumentsSDKException {
 
-    IDeviceSDK d;
+    IOSDevice d = DeviceService.get(uuid);
+    InstrumentsService instruments = new InstrumentsService(d, "com.apple.mobilesafari");
 
-    synchronized (this) {
-      d = new IDeviceSDK(uuid);
-    }
-
-    InstrumentsService instruments = new InstrumentsService(d, "com.apple.mobilesafari",null);
-
-    Counter c = Counter.INSTANCE;
-
-
-    for(int i=0;i<10;i++){
+    for (int i = 0; i < 10; i++) {
       Thread.sleep(200);
-      c.start();
       instruments.executeScriptNonManaged("UIALogger.logMessage('Hello World!');");
     }
 
-    instruments.stopApp();
+    instruments.free();
   }
 }

@@ -12,10 +12,26 @@
  * the License.
  */
 
-package org.libimobiledevice.ios.driver.binding.sdk;
+package org.libimobiledevice.ios.driver.binding.exceptions;
 
-public interface MessageHandler {
+public class SDKException extends libImobileDeviceWrapperException {
 
-  public void handle(String message);
+  private final SDKErrorCode code;
+
+  public SDKException(int code) {
+    for (SDKErrorCode error : SDKErrorCode.values()) {
+      if (code == error.getCode()) {
+        this.code = error;
+        return;
+      }
+    }
+    System.err
+        .println("Cannot find the returned error code for the SDK call.Assigning unknown.");
+    this.code = SDKErrorCode.SDK_UNKNOWN_ERROR_CODE;
+  }
+
+  public SDKException(String message) {
+    super(message);
+    code = SDKErrorCode.SDK_UNKNOWN_ERROR_CODE;
+  }
 }
-

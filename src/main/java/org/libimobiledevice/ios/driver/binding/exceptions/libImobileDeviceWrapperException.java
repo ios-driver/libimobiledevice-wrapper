@@ -12,22 +12,18 @@
  * the License.
  */
 
-package org.libimobiledevice.ios.driver.binding.instruments;
+package org.libimobiledevice.ios.driver.binding.exceptions;
 
-public class Counter {
+public class libImobileDeviceWrapperException extends Exception {
 
-  public static final Counter INSTANCE = new Counter();
-  private long timestamp;
-
-  private Counter() {
+  public libImobileDeviceWrapperException(String message) {
+    super(message);
   }
 
-  public void start() {
-    timestamp = System.currentTimeMillis();
+  public libImobileDeviceWrapperException() {
   }
 
-  public void lap() {
-    long total =  System.currentTimeMillis()-timestamp;
-    System.out.println("lap : " + total);
+  public libImobileDeviceWrapperException(String message, Throwable cause) {
+    super(message,cause);
   }
 }

@@ -12,10 +12,20 @@
  * the License.
  */
 
-package org.libimobiledevice.ios.driver.binding;
+package org.libimobiledevice.ios.driver.binding.services;
 
-public interface DeviceDetectionCallback {
+import com.sun.jna.Pointer;
 
-  public void onAdded(String uuid);
-  public void onRemoved(String uuid);
-}
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_read_cb_t;
+
+public abstract class SyslogMessageHandler implements sdk_idevice_syslog_service_read_cb_t {
+
+  @Override
+  public void apply(byte c, Pointer user_data) {
+    onCharacter((char) c);
+  }
+
+  protected abstract void onCharacter(char c);
+};
+
+

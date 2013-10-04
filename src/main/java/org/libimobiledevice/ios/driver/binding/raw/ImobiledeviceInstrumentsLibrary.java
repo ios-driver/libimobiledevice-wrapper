@@ -129,8 +129,8 @@ public class ImobiledeviceInstrumentsLibrary implements Library {
 	@Deprecated 
 	public static native short uiautomation_client_free(Pointer client);
 	public static native short uiautomation_client_free(ImobiledeviceInstrumentsLibrary.uiautomation_client_t client);
-	@Deprecated 
-	public static native short uiautomation_client_set_message_handler(Pointer client, ImobiledeviceInstrumentsLibrary.uiautomation_message_handler_t handler);
+	@Deprecated
+	public static native short uiautomation_client_set_message_handler(uiautomation_client_t client, uiautomation_exception_handler_t handler);
 	public static native short uiautomation_client_set_message_handler(ImobiledeviceInstrumentsLibrary.uiautomation_client_t client, ImobiledeviceInstrumentsLibrary.uiautomation_message_handler_t handler);
 	@Deprecated 
 	public static native short uiautomation_client_set_exception_handler(Pointer client, ImobiledeviceInstrumentsLibrary.uiautomation_exception_handler_t handler);

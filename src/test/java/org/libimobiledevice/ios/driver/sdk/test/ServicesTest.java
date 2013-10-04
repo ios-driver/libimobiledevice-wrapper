@@ -1,8 +1,8 @@
 package org.libimobiledevice.ios.driver.sdk.test;
 
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
-import org.libimobiledevice.ios.driver.binding.sdk.IDeviceSDK;
-import org.libimobiledevice.ios.driver.binding.sdk.InformationService;
+import org.libimobiledevice.ios.driver.binding.wrapper.IDeviceSDK;
+import org.libimobiledevice.ios.driver.binding.services.InformationService;
 import org.testng.annotations.Test;
 
 import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;

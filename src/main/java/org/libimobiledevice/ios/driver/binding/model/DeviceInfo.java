@@ -12,7 +12,7 @@
  * the License.
  */
 
-package org.libimobiledevice.ios.driver.binding;
+package org.libimobiledevice.ios.driver.binding.model;
 
 import com.dd.plist.NSArray;
 import com.dd.plist.NSData;
@@ -23,8 +23,10 @@ import com.dd.plist.NSObject;
 import com.dd.plist.NSString;
 
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
-import org.libimobiledevice.ios.driver.binding.sdk.IDeviceSDK;
-import org.libimobiledevice.ios.driver.binding.sdk.InformationService;
+import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
+import org.libimobiledevice.ios.driver.binding.services.DeviceService;
+import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
+import org.libimobiledevice.ios.driver.binding.services.InformationService;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Node;
@@ -44,9 +46,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class DeviceInfo {
 
-  private IMobileDeviceFactory factory = null;
 
   private final String raw;
+  private final boolean devMode;
   private String buildVersion;
   private String bluetoothAddress;
   private String boardId;
@@ -64,7 +66,22 @@ public class DeviceInfo {
   private String modelNumber;
   // array of int
   private String SupportedDeviceFamilies;
-  private final boolean devMode;
+
+  public DeviceInfo(String uuid) throws LibImobileException, SDKException {
+    IOSDevice device = DeviceService.get(uuid);
+    InformationService service = new InformationService(device);
+    String res = service.getValueAsXML(null, null);
+
+    this.raw = res;
+    try {
+      parse();
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException("Cannot parse the device info xml " + e.getMessage(), e);
+    }
+    this.devMode = service.isDevModeEnabled();
+
+  }
 
   public String getBluetoothAddress() {
     return bluetoothAddress;
@@ -122,22 +139,6 @@ public class DeviceInfo {
     return wifiAddress;
   }
 
-  public DeviceInfo(String uuid) throws LibImobileException {
-    InformationService service = new InformationService(new IDeviceSDK(uuid));
-    String res = service.getValueAsXML(null, null);
-
-    this.raw = res;
-    try {
-      parse();
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new RuntimeException("Cannot parse the device info xml " + e.getMessage(), e);
-    }
-    IOSDevice device = factory.get(uuid);
-    this.devMode = device.isDeveloperMode();
-  }
-
-
   private void parse() throws java.lang.Exception {
     byte[] xml = raw.getBytes("UTF-8");
     NSDictionary rootDict = (NSDictionary) MyParser.parse(xml);
@@ -169,7 +170,6 @@ public class DeviceInfo {
     }
   }
 
-
   @Override
   public String toString() {
     final StringBuffer sb = new StringBuffer();
@@ -185,20 +185,17 @@ public class DeviceInfo {
     return sb.toString();
   }
 
-
   public String getBuildVersion() {
     return buildVersion;
   }
-
 
   public boolean isDevMode() {
     return devMode;
   }
 
-
-
-
   public static class MyParser {
+
+    private static DocumentBuilderFactory docBuilderFactory = null;
 
     /**
      * Objects are unneccesary.
@@ -206,8 +203,6 @@ public class DeviceInfo {
     public MyParser() {
       /** empty **/
     }
-
-    private static DocumentBuilderFactory docBuilderFactory = null;
 
     /**
      * Initialize the document builder factory so that it can be reuused and does not need to be
@@ -223,12 +218,13 @@ public class DeviceInfo {
     }
 
     /**
-     * Gets a DocumentBuilder to parse a XML property list. As DocumentBuilders are not thread-safe a
-     * new DocBuilder is generated for each request.
+     * Gets a DocumentBuilder to parse a XML property list. As DocumentBuilders are not thread-safe
+     * a new DocBuilder is generated for each request.
      *
      * @return A new DocBuilder that can parse property lists w/o an internet connection.
      */
-    private static synchronized DocumentBuilder getDocBuilder() throws ParserConfigurationException {
+    private static synchronized DocumentBuilder getDocBuilder()
+        throws ParserConfigurationException {
       if (docBuilderFactory == null) {
         initDocBuilderFactory();
       }

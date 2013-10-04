@@ -12,35 +12,35 @@
  * the License.
  */
 
-package org.libimobiledevice.ios.driver.binding;
+package org.libimobiledevice.ios.driver.binding.services;
 
 import com.sun.jna.Pointer;
 
-import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary.idevice_event_cb_t;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary.idevice_event_t;
 
-class DeviceCallBack implements ImobiledeviceLibrary.idevice_event_cb_t {
+public abstract class DeviceCallBack implements idevice_event_cb_t {
 
-  private final DeviceDetectionCallback cb;
   private final int ADDED = 1;
   private final int REMOVED = 2;
 
-  DeviceCallBack(DeviceDetectionCallback callback) {
-    this.cb = callback;
-  }
-
   @Override
-  public void apply(ImobiledeviceLibrary.idevice_event_t event, Pointer user_data) {
+  public void apply(idevice_event_t event, Pointer user_data) {
     switch (event.event) {
       case ADDED:
-        cb.onAdded(event.udid);
+        onDeviceAdded(event.udid);
         break;
       case REMOVED:
-        cb.onRemoved(event.udid);
+        onDeviceRemoved(event.udid);
         break;
       default:
         throw new RuntimeException("event type " + event.event + "not recognized.");
     }
   }
+
+  protected abstract void onDeviceAdded(String uuid);
+
+  protected abstract void onDeviceRemoved(String uuid);
 
 
 }

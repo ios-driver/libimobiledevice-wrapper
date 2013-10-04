@@ -17,20 +17,16 @@ package org.libimobiledevice.ios.driver.binding;
 import com.sun.jna.NativeLibrary;
 
 import org.apache.commons.io.IOUtils;
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
-import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
-public class IMobileDeviceFactory {
+public class LibImobileDeviceWrapperFactory {
 
-  private DeviceDetectionCallback callback;
-  private DeviceCallBack cb_t;
+
+  public static LibImobileDeviceWrapperFactory INSTANCE = new LibImobileDeviceWrapperFactory();
 
   static {
     File f = new File(System.getProperty("user.home"));
@@ -57,9 +53,11 @@ public class IMobileDeviceFactory {
 
   }
 
+  private LibImobileDeviceWrapperFactory() {
+
+  }
 
   private static void unpack(String lib, File out) {
-    //System.out.println("unpacking " + lib);
     InputStream
         in =
         Thread.currentThread().getContextClassLoader().getResourceAsStream("darwin/" + lib);
@@ -73,51 +71,9 @@ public class IMobileDeviceFactory {
       IOUtils.copy(in, w);
       IOUtils.closeQuietly(w);
       IOUtils.closeQuietly(in);
-      //System.out.println("unpacked :" + lib);
     } catch (IOException e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
     }
 
   }
-
-  private static final Map<String, IOSDevice> devices = new HashMap<String, IOSDevice>();
-  public static IMobileDeviceFactory INSTANCE = new IMobileDeviceFactory();
-
-  private IMobileDeviceFactory() {
-
-  }
-
-  public synchronized static IOSDevice get(String uuid) throws LibImobileException {
-    if (uuid == null) {
-      throw new IllegalArgumentException("device id cannot be null.");
-    }
-    IOSDevice res = devices.get(uuid);
-    if (res == null) {
-      res = new IOSDevice(uuid);
-      devices.put(uuid, res);
-    }
-    return res;
-  }
-
-
-  public static void release() {
-    devices.clear();
-  }
-
-  public void setDeviceDetectionCallback(DeviceDetectionCallback cb) {
-    if (cb == null) {
-      throw new IllegalArgumentException("cb cannot null");
-    }
-    cb_t = new DeviceCallBack(cb);
-  }
-
-  public void startDetection() {
-    ImobiledeviceLibrary.idevice_event_subscribe(cb_t, null);
-  }
-
-  public void stopDetection() {
-    ImobiledeviceLibrary.idevice_event_unsubscribe();
-  }
-
-
 }
