@@ -49,6 +49,10 @@ public class DeviceService {
     INSTANCE.devices.clear();
   }
 
+  public static void remove(String uuid) {
+    DeviceService.INSTANCE.devices.remove(uuid);
+  }
+
   public void startDetection(DeviceCallBack cb) throws LibImobileException {
     if (cb == null) {
       cb = new DeviceCallBack() {

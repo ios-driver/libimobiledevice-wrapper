@@ -38,6 +38,7 @@ public class IOSDevice {
   private final idevice_t handle;
   private final sdk_idevice_t sdk_handle;
 
+
   IOSDevice(String uuid) throws LibImobileException, SDKException {
     if (uuid == null) {
       throw new IllegalArgumentException("uuid cannot be null");
@@ -67,7 +68,9 @@ public class IOSDevice {
   }
 
 
-
+  public String getUUID() {
+    return uuid;
+  }
 }
 
 

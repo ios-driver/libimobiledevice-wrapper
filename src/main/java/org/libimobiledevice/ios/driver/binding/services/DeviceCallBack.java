@@ -32,6 +32,7 @@ public abstract class DeviceCallBack implements idevice_event_cb_t {
         break;
       case REMOVED:
         onDeviceRemoved(event.udid);
+        DeviceService.remove(event.udid);
         break;
       default:
         throw new RuntimeException("event type " + event.event + "not recognized.");
