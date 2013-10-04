@@ -12,10 +12,12 @@
  * the License.
  */
 
-package org.libimobiledevice.ios.driver.sdk.test;
+package org.libimobiledevice.ios.driver.test;
 
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
-import org.libimobiledevice.ios.driver.binding.wrapper.IDeviceSDK;
+import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
+import org.libimobiledevice.ios.driver.binding.services.DeviceService;
+import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
 import org.libimobiledevice.ios.driver.binding.services.InformationService;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -29,83 +31,81 @@ public class InformationServiceTest {
   private InformationService service;
 
   @BeforeClass
-  public void setup() throws LibImobileException {
-    IDeviceSDK d = new IDeviceSDK(main);
+  public void setup() throws LibImobileException, SDKException {
+    IOSDevice d = DeviceService.get(main);
     service = new InformationService(d);
   }
 
   @AfterClass
-  public void tearDown() {
-    service.release();
+  public void tearDown() throws SDKException {
+    service.free();
   }
 
-
   @Test
-  public void serviceCanGetName() throws LibImobileException {
+  public void serviceCanGetName() throws LibImobileException, SDKException {
     String name = service.getDeviceName();
     System.out.println(name);
   }
 
   @Test
-  public void serviceCanGetType() throws LibImobileException {
+  public void serviceCanGetType() throws LibImobileException, SDKException {
     String type = service.getDeviceType();
     System.out.println("type :" + type);
   }
 
   @Test
-  public void serviceCanGetLanguage() throws LibImobileException {
+  public void serviceCanGetLanguage() throws LibImobileException, SDKException {
     String language = service.getLanguage();
     System.out.println("language :" + language);
   }
 
   @Test
-  public void serviceCanGetLocale() throws LibImobileException {
+  public void serviceCanGetLocale() throws LibImobileException, SDKException {
     String locale = service.getLocale();
     System.out.println("locale :" + locale);
   }
 
   @Test
-  public void serviceCanGetProductVersion() throws LibImobileException {
+  public void serviceCanGetProductVersion() throws LibImobileException, SDKException {
     String productVersion = service.getProductVersion();
     System.out.println("productVersion :" + productVersion);
   }
 
   @Test
-  public void serviceCanGetValueAsXMLAll() throws LibImobileException {
-    String xml = service.getValueAsXML(null,null);
+  public void serviceCanGetValueAsXMLAll() throws LibImobileException, SDKException {
+    String xml = service.getValueAsXML(null, null);
     System.out.println("xml :" + xml);
   }
 
   @Test
-  public void serviceCanGetValueAsXMLAllKeysOfADomain() throws LibImobileException {
-    String xml = service.getValueAsXML("com.apple.international",null);
+  public void serviceCanGetValueAsXMLAllKeysOfADomain() throws LibImobileException, SDKException {
+    String xml = service.getValueAsXML("com.apple.international", null);
     System.out.println("xml :" + xml);
   }
 
   @Test
-  public void serviceCanGetValueAsXMLOneKey() throws LibImobileException {
-    String xml = service.getValueAsXML("com.apple.international","HostKeyboard");
+  public void serviceCanGetValueAsXMLOneKey() throws LibImobileException, SDKException {
+    String xml = service.getValueAsXML("com.apple.international", "HostKeyboard");
     System.out.println("xml :" + xml);
   }
 
   @Test(enabled = false)
-  public void serviceCanSetDeviceName() throws LibImobileException {
-   service.setDeviceName("test device");
+  public void serviceCanSetDeviceName() throws LibImobileException, SDKException {
+    service.setDeviceName("test device");
   }
 
   @Test
-  public void serviceCanSetLocale() throws LibImobileException {
+  public void serviceCanSetLocale() throws LibImobileException, SDKException {
     service.setLocale("en_GB");
   }
 
-
   @Test
-  public void serviceCanSetLanguage() throws LibImobileException {
+  public void serviceCanSetLanguage() throws LibImobileException, SDKException {
     service.setLanguage("fr");
   }
 
   @Test
-  public void serviceCanGetDeviceEnabled() throws LibImobileException {
+  public void serviceCanGetDeviceEnabled() throws LibImobileException, SDKException {
     boolean isDev = service.isDevModeEnabled();
     System.out.println("dev mode :" + isDev);
   }

@@ -115,8 +115,7 @@ public class InformationService {
 
   }
 
-  public void release() throws SDKException {
+  public void free() throws SDKException {
     throwIfNeeded(information_service_free(sdk_idevice_information_service_t));
   }
-
 }

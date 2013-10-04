@@ -35,7 +35,7 @@ public class IDeviceNewThreadTest {
     service.setLanguage("en");
     service.setLanguage("en_US");
     service.setLanguage("fr_CA");
-    service.release();
+    service.free();
 
     DeviceService.free();
   }
