@@ -1,11 +1,9 @@
 package org.libimobiledevice.ios.driver.test;
 
-import org.libimobiledevice.ios.driver.binding.IMobileDeviceFactory;
-import org.libimobiledevice.ios.driver.binding.IOSDevice;
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.instruments.Counter;
 import org.libimobiledevice.ios.driver.binding.sdk.IDeviceSDK;
-import org.libimobiledevice.ios.driver.binding.sdk.InstrumentsService;
+import org.libimobiledevice.ios.driver.binding.sdk.instruments.InstrumentsService;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

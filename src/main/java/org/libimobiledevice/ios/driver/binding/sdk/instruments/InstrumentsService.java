@@ -12,13 +12,15 @@
  * the License.
  */
 
-package org.libimobiledevice.ios.driver.binding.sdk;
+package org.libimobiledevice.ios.driver.binding.sdk.instruments;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
 import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceInstrumentsLibrary;
 import org.libimobiledevice.ios.driver.binding.raw.PlistLibrary;
+import org.libimobiledevice.ios.driver.binding.sdk.IDeviceSDK;
+import org.libimobiledevice.ios.driver.binding.sdk.MessageHandler;
 
 import java.nio.IntBuffer;
 

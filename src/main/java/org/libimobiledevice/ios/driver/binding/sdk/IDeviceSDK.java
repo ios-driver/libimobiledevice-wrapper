@@ -44,7 +44,7 @@ public class IDeviceSDK extends IDevice {
     return sdk_handle;
   }
 
-  ImobiledeviceInstrumentsLibrary.idevice_t getHandleIdevice() {
+  public ImobiledeviceInstrumentsLibrary.idevice_t getHandleIdevice() {
     return handle;
   }
 

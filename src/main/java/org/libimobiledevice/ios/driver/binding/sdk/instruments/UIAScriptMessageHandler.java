@@ -1,4 +1,4 @@
-package org.libimobiledevice.ios.driver.binding.sdk;
+package org.libimobiledevice.ios.driver.binding.sdk.instruments;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
