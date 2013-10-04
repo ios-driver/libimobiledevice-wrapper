@@ -27,8 +27,10 @@ import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrar
 public class SysLogService {
 
   private final sdk_idevice_syslog_service_t service;
+  private final SyslogMessageListeners handlers = new SyslogMessageListeners();
+  private boolean started = false;
 
-  public SysLogService(IOSDevice d) throws SDKException {
+  SysLogService(IOSDevice d) throws SDKException {
     PointerByReference ptr = new PointerByReference();
 
     throwIfNeeded(syslog_service_new(d.getSDKHandle(), ptr));
@@ -36,21 +38,44 @@ public class SysLogService {
 
   }
 
-  public void start(SyslogMessageHandler handler) throws SDKException {
+  private void start() throws SDKException {
+    if (!started) {
+      throwIfNeeded(syslog_service_start_capture(service, handlers, null));
+    }
+    started = true;
+  }
 
-    if (handler == null) {
-      handler = new SyslogMessageHandler() {
+  /**
+   * add an additional listener to syslog. Start the service on the first listener.
+   * @param listener
+   * @throws SDKException
+   */
+  public void addListener(SysLogListener listener) throws SDKException {
+
+    if (!started) {
+      start();
+    }
+
+    if (listener == null && handlers.size() == 0) {
+      listener = new SysLogListener() {
+
         @Override
-        protected void onCharacter(char c) {
+        public void onCharacter(char c) {
           System.out.print(c);
         }
       };
     }
-    throwIfNeeded(syslog_service_start_capture(service, handler, null));
+    handlers.add(listener);
+  }
+
+  public void remove(SysLogListener listener) {
+   handlers.remove(listener);
+
   }
 
   public void stop() throws SDKException {
     throwIfNeeded(syslog_service_stop_capture(service));
+    started = false;
   }
 
 

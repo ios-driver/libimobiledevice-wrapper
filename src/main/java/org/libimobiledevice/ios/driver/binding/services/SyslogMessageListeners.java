@@ -16,16 +16,32 @@ package org.libimobiledevice.ios.driver.binding.services;
 
 import com.sun.jna.Pointer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_read_cb_t;
 
-public abstract class SyslogMessageHandler implements sdk_idevice_syslog_service_read_cb_t {
+public class SyslogMessageListeners implements sdk_idevice_syslog_service_read_cb_t {
+
+  private final List<SysLogListener> all = new ArrayList<SysLogListener>();
 
   @Override
   public void apply(byte c, Pointer user_data) {
-    onCharacter((char) c);
+    for (SysLogListener h : all) {
+      h.onCharacter((char) c);
+    }
   }
 
-  protected abstract void onCharacter(char c);
-};
+  public void add(SysLogListener listener) {
+    all.add(listener);
+  }
 
+  public void remove(SysLogListener listener) {
+    all.remove(listener);
+  }
 
+  public int size() {
+    return all.size();
+
+  }
+}

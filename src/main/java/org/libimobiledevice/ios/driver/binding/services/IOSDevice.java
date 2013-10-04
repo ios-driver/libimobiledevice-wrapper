@@ -37,6 +37,7 @@ public class IOSDevice {
   private final String uuid;
   private final idevice_t handle;
   private final sdk_idevice_t sdk_handle;
+  private SysLogService sysLogService;
 
 
   IOSDevice(String uuid) throws LibImobileException, SDKException {
@@ -70,6 +71,13 @@ public class IOSDevice {
 
   public String getUUID() {
     return uuid;
+  }
+
+  public SysLogService getSysLogService() throws SDKException {
+    if (sysLogService == null){
+      sysLogService = new SysLogService(this);
+    }
+    return sysLogService;
   }
 }
 

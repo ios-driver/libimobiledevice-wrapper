@@ -35,7 +35,7 @@ public class InstallTest {
   public void deviceCanInstall() throws LibImobileException, SDKException {
     IOSDevice d = DeviceService.get(main);
     InstallerService service = new InstallerService(d);
-    SysLogService s2 = new SysLogService(d);
+    //SysLogService s2 = d.getSysLogService();
     //s2.start();
 
     final InstallCallback cb = new InstallCallback() {

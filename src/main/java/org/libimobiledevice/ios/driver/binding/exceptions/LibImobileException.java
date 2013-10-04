@@ -17,6 +17,7 @@ package org.libimobiledevice.ios.driver.binding.exceptions;
 public class LibImobileException extends libImobileDeviceWrapperException {
 
   private final ErrorCode code;
+  private String msg;
 
   public LibImobileException() {
     code = ErrorCode.JAVA_ERROR;
@@ -42,5 +43,11 @@ public class LibImobileException extends libImobileDeviceWrapperException {
     System.err.println(
         "Cannot find the returned error code for the call.Assigning unknown.");
     this.code = ErrorCode.JAVA_ERROR;
+    this.msg = this.code.toString();
+  }
+
+  @Override
+  public String getMessage(){
+    return this.msg;
   }
 }

@@ -101,7 +101,7 @@ public class InformationServiceTest {
 
   @Test
   public void serviceCanSetLanguage() throws LibImobileException, SDKException {
-    service.setLanguage("fr");
+    service.setLanguage("en");
   }
 
   @Test

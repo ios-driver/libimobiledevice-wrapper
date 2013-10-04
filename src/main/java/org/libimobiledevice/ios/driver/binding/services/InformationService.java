@@ -38,10 +38,12 @@ import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrar
 public class InformationService {
 
   private final sdk_idevice_information_service_t sdk_idevice_information_service_t;
+  private final IOSDevice device;
 
-  public InformationService(IOSDevice deviceSDK) throws SDKException {
+  public InformationService(IOSDevice device) throws SDKException {
+    this.device = device;
     PointerByReference ptr = new PointerByReference();
-    throwIfNeeded(information_service_new(deviceSDK.getSDKHandle(), ptr));
+    throwIfNeeded(information_service_new(device.getSDKHandle(), ptr));
     sdk_idevice_information_service_t = new sdk_idevice_information_service_t(ptr.getValue());
   }
 
@@ -88,6 +90,11 @@ public class InformationService {
   }
 
   public void setLocale(String locale) throws SDKException {
+    String current = getLocale();
+    if (locale.equals(current)){
+      return;
+    }
+
     throwIfNeeded(information_service_set_locale(sdk_idevice_information_service_t, locale));
   }
 
