@@ -42,17 +42,18 @@ class InstrumentsClient {
       throws InstrumentsSDKException {
     int retryCount = 0;
     instruments_client_t client;
+    InstrumentsSDKException e =null;
     while (retryCount < RETRY) {
       try {
         client = startService();
         return client;
-      } catch (InstrumentsSDKException e) {
+      } catch (InstrumentsSDKException ex) {
+        e = ex;
         retryCount++;
       }
     }
 
-    throw new InstrumentsSDKException(
-        "Failed to start the instrumens service after " + retry + " retries.");
+    throw (e);
   }
 
   instruments_client_t getCHandle() {
@@ -70,7 +71,7 @@ class InstrumentsClient {
   }
 
   public synchronized AutomationClient getAutomationClient() throws InstrumentsSDKException {
-    if (allocated = false) {
+    if (!allocated) {
       throw new InstrumentsSDKException("Instruments has been freed");
     }
     if (automationClient == null) {

@@ -14,9 +14,11 @@ public class DebugTest {
   @Test(groups = "smoke")
   public void deviceCanDebugLaunch() throws InterruptedException, LibImobileException,
                                             SDKException {
+
     DebugService service = new DebugService(DeviceService.get(main));
-    service.launch("com.apple.mobilesafari");
-    //service.launch("com.yourcompany.UICatalog");
+    int pid = service.launch("com.yourcompany.UICatalog");
+    System.out.println(pid);
+
 
     service.free();
   }
