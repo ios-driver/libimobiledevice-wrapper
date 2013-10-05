@@ -119,9 +119,6 @@ public class InformationServiceTest {
 
   @Test
   public void getTime() throws SDKException, InterruptedException {
-    for (int i = 0; i < 10; i++) {
-      Thread.sleep(1000);
-      System.out.println(service.getDate());
-    }
+    System.out.println(service.getDate());
   }
 }

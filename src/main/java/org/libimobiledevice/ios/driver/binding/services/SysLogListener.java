@@ -18,3 +18,4 @@ public interface SysLogListener {
 
   void onCharacter(char c);
 }
+

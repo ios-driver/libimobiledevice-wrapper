@@ -55,13 +55,6 @@ public class InformationService {
     sdk_idevice_information_service_t = new sdk_idevice_information_service_t(ptr.getValue());
   }
 
-  public static void main(String[] args) throws ParseException {
-    String s = Calendar.getInstance().get(Calendar.YEAR) + " Oct  4 23:57:25";
-    SimpleDateFormat parser = new SimpleDateFormat("yyyy MMM d HH:mm:ss");
-    Date d = parser.parse(s);
-    System.out.println(d);
-  }
-
   public boolean isDevModeEnabled() throws SDKException {
     IntBuffer enabled = IntBuffer.allocate(1);
     throwIfNeeded(
