@@ -82,7 +82,7 @@ public class InformationService {
     return getValue(ptr);
   }
 
-  public void setLanguage(String language) throws SDKException, InterruptedException {
+  public void setLanguage(String language) throws SDKException {
     String current = getLanguage();
     if (language.equals(current)) {
       return;
@@ -95,7 +95,12 @@ public class InformationService {
 
     long deadline = System.currentTimeMillis() + 20000;
     while (!listener.isDone()) {
-      Thread.sleep(500);
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        //ignore.
+      }
+
       if (System.currentTimeMillis() > deadline) {
         System.out.println("didn't find a clue in " + listener.toString());
       }
