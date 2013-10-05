@@ -32,10 +32,7 @@ public class InformationServiceTest {
 
   private InformationService service;
 
-  public static void main(String[] args) {
-    System.out.println(new Date(1380923274951L));
-  }
-
+ 
   @BeforeClass
   public void setup() throws LibImobileException, SDKException {
     IOSDevice d = DeviceService.get(main);
