@@ -27,7 +27,7 @@ public class SysLogLine {
   private String message;
   private String original;
 
-  SysLogLine(String line) {
+  SysLogLine(String line) throws LogParsingException {
     original = line;
     // Date
     try {
@@ -55,7 +55,14 @@ public class SysLogLine {
       // and trim leading space
       message = rest.trim();
     } catch (Exception e) {
-      System.err.println("Cannot parse line (is it a full line ?)"+original+" , "+e.getMessage());
+      throw new LogParsingException("Cannot parse line (is it a full line ?)"+original);
+    }
+  }
+
+  static class LogParsingException extends Exception {
+
+    public LogParsingException(String message) {
+      super(message);
     }
   }
 

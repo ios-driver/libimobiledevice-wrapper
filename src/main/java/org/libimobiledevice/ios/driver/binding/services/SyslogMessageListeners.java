@@ -33,8 +33,13 @@ public class SyslogMessageListeners implements sdk_idevice_syslog_service_read_c
       String line = buff.toString();
       buff = new StringBuffer();
       for (SysLogListener h : all) {
-        SysLogLine log = new SysLogLine(line);
-        h.onLog(log);
+        SysLogLine log = null;
+        try {
+          log = new SysLogLine(line);
+          h.onLog(log);
+        } catch (SysLogLine.LogParsingException e) {
+          System.err.println(e.getMessage());
+        }
       }
     } else {
       buff.append(c);

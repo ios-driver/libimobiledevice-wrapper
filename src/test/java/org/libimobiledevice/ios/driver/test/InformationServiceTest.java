@@ -32,7 +32,7 @@ public class InformationServiceTest {
 
   private InformationService service;
 
- 
+
   @BeforeClass
   public void setup() throws LibImobileException, SDKException {
     IOSDevice d = DeviceService.get(main);
@@ -105,7 +105,7 @@ public class InformationServiceTest {
   @Test
   public void serviceCanSetLanguage() throws LibImobileException, SDKException,
                                              InterruptedException {
-    service.setLanguage("fr");
+    service.setLanguage("en");
   }
 
   @Test

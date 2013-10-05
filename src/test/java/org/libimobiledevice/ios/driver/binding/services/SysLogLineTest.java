@@ -35,7 +35,7 @@ public class SysLogLineTest {
   /*9*/    "Warning>: Launch Services: Unable to find app identifier com.apple.AssistantServices" };
 
   @Test
-  public void canExtractDate() {
+  public void canExtractDate() throws SysLogLine.LogParsingException {
     //Oct  5 00:31:43
     SysLogLine line = new SysLogLine(lines[0]);
 
@@ -51,7 +51,7 @@ public class SysLogLineTest {
   }
 
   @Test
-  public void assumesCurrentYear() {
+  public void assumesCurrentYear() throws SysLogLine.LogParsingException {
     SysLogLine line = new SysLogLine(lines[0]);
 
     Calendar c = Calendar.getInstance();
@@ -63,7 +63,7 @@ public class SysLogLineTest {
   }
 
   @Test
-  public void canExtractProcessAndPid() {
+  public void canExtractProcessAndPid() throws SysLogLine.LogParsingException {
     SysLogLine wifi = new SysLogLine(lines[0]);
     SysLogLine lockdownd = new SysLogLine(lines[1]);
     SysLogLine springBoard = new SysLogLine(lines[2]);
@@ -82,7 +82,7 @@ public class SysLogLineTest {
   }
 
   @Test
-  public void canExtractLevel() {
+  public void canExtractLevel() throws SysLogLine.LogParsingException {
     SysLogLine wifi = new SysLogLine(lines[0]);
     SysLogLine lockdownd = new SysLogLine(lines[1]);
     SysLogLine springBoard = new SysLogLine(lines[2]);
@@ -96,7 +96,7 @@ public class SysLogLineTest {
   }
 
   @Test
-  public void canExtractMessage() {
+  public void canExtractMessage() throws SysLogLine.LogParsingException {
     SysLogLine wifi = new SysLogLine(lines[0]);
     SysLogLine lockdownd = new SysLogLine(lines[1]);
     SysLogLine springBoard = new SysLogLine(lines[2]);
@@ -110,7 +110,7 @@ public class SysLogLineTest {
   }
 
   @Test
-  public void survivesPartialLines() {
+  public void survivesPartialLines() throws SysLogLine.LogParsingException {
     SysLogLine startMissing = new SysLogLine(lines[8]);
     SysLogLine endMissing = new SysLogLine(lines[9]);
 
