@@ -21,12 +21,7 @@ import com.sun.jna.ptr.PointerByReference;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 
 import java.nio.IntBuffer;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.libimobiledevice.ios.driver.binding.exceptions.SDKErrorCode.throwIfNeeded;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.information_service_free;
@@ -161,63 +156,30 @@ public class InformationService {
     throwIfNeeded(information_service_free(sdk_idevice_information_service_t));
   }
 
+  /**
+   * look for the magic string after this given time (the device buffers the last logs, so if you
+   * change the language plenty of time in a row, you risk getting the logs from the previous
+   * changes
+   */
   private static class IsRestartedListener implements SysLogListener {
 
-    private final List<String> lines = new CopyOnWriteArrayList<String>();
     private final Date after;
-    private StringBuffer buff = new StringBuffer();
     private volatile boolean isDone = false;
 
     IsRestartedListener(Date after) {
       this.after = after;
     }
 
-    @Override
-    public void onCharacter(char c) {
-      if (c == '\n') {
-        String line = buff.toString();
-        lines.add(line);
-        if (line.contains("SIMToolkit plugin for SpringBoard initialized")) {
-          boolean a = false;
-          try {
-            a = isAfter(line, after);
-          } catch (ParseException e) {
-            System.err.println("Cannot parse the date in line " + line);
-          }
-          if (a) {
-            isDone = true;
-          }
-        }
-        buff = new StringBuffer();
-      } else {
-        buff.append(c);
-      }
-    }
-
-    private boolean isAfter(String line, Date after) throws ParseException {
-      Date d = extractDate(line);
-      boolean a = d.after(after);
-      return a;
-    }
-
-    private Date extractDate(String line) throws ParseException {
-      String d = Calendar.getInstance().get(Calendar.YEAR) + " " + line.substring(0, 15);
-      SimpleDateFormat parser = new SimpleDateFormat("yyyy MMM d HH:mm:ss");
-      return parser.parse(d);
-    }
-
-    /**
-     * look for the magic string after this given time (the device buffers the last logs, so if you
-     * change the language plenty of time in a row, you risk to get the logs from the previous
-     * changes
-     */
     private boolean isDone() {
       return isDone;
     }
 
     @Override
-    public String toString() {
-      return buff.toString();
+    public void onLog(SysLogLine line) {
+      if (line.getMessage().contains("SIMToolkit plugin for SpringBoard initialized") &&
+          line.getDate().after(after)) {
+        isDone = true;
+      }
     }
   }
 

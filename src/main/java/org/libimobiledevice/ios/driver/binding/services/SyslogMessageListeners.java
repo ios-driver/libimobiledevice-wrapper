@@ -24,11 +24,20 @@ import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrar
 public class SyslogMessageListeners implements sdk_idevice_syslog_service_read_cb_t {
 
   private final List<SysLogListener> all = new ArrayList<SysLogListener>();
+  private StringBuffer buff = new StringBuffer();
 
   @Override
-  public void apply(byte c, Pointer user_data) {
-    for (SysLogListener h : all) {
-        h.onCharacter((char) c);
+  public void apply(byte b, Pointer user_data) {
+    char c = (char) b;
+    if (c == '\n') {
+      String line = buff.toString();
+      buff = new StringBuffer();
+      for (SysLogListener h : all) {
+        SysLogLine log = new SysLogLine(line);
+        h.onLog(log);
+      }
+    } else {
+      buff.append(c);
     }
   }
 

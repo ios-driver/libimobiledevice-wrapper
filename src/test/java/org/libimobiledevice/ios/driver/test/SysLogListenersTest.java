@@ -18,6 +18,7 @@ import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
 import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
+import org.libimobiledevice.ios.driver.binding.services.SysLogLine;
 import org.libimobiledevice.ios.driver.binding.services.SysLogListener;
 import org.libimobiledevice.ios.driver.binding.services.SysLogService;
 import org.testng.annotations.Test;
@@ -30,18 +31,20 @@ public class SysLogListenersTest {
     SysLogService log = d.getSysLogService();
 
     SysLogListener l = new SysLogListener() {
+
       @Override
-      public void onCharacter(char c) {
-        System.out.print(c);
+      public void onLog(SysLogLine line) {
+        System.out.println(line);
       }
     };
     log.addListener(l);
     Thread.sleep(1000);
 
     log.addListener(new SysLogListener() {
+
       @Override
-      public void onCharacter(char c) {
-        System.err.print(c);
+      public void onLog(SysLogLine line) {
+        System.out.println(line);
       }
     });
 

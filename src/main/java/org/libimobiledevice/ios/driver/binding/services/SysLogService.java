@@ -59,9 +59,10 @@ public class SysLogService {
     if (listener == null && handlers.size() == 0) {
       listener = new SysLogListener() {
 
+
         @Override
-        public void onCharacter(char c) {
-          System.out.print(c);
+        public void onLog(SysLogLine line) {
+          System.out.println(line.toString());
         }
       };
     }

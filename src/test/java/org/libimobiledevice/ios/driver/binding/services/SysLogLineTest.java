@@ -23,16 +23,16 @@ public class SysLogLineTest {
 
 
   private String[] lines = new String[]{
-      "Oct  5 00:31:43  wifid[14] <Error>: WiFi:[402618703.480754]: WiFi unquiescing requested by \"locationd\"",
-      "Oct  5 00:32:12  lockdownd[44] <Notice>: 00281000 set_language: Prepending the language list with en",
-      "Oct  5 00:32:12  SpringBoard[3634] <Warning>: Preferred language has changed from 'de' to 'en'. Relaunching.",
-      "Oct  5 00:32:12  com.apple.launchd[1] <Error>: (com.apple.mediaserverd) Exited with code: 254",
-      "Oct  5 00:32:12  com.apple.launchd[1] <Error>: (com.apple.itunesstored) Exited with code: 253",
-      "Oct  5 00:32:12  CommCenterMobileHelper[3654] <Error>: VM_ALLOCATE 920l (mhs1)",
-      "Oct  5 00:32:12  tccd[3640] <Notice>: Exiting due to language change",
-      "Oct  5 00:32:12  mediaserverd[3652] <Error>: libMobileGestalt copySystemVersionDictionaryValue: Could not lookup ReleaseType from system version dictionary",
-      "Oct  5 00:32:12  locationd[45] <Warning>: Launch Services: Registering unknown app identifier com.apple.AssistantServices failed",
-      "Oct  5 00:32:12  locationd[45] <Warning>: Launch Services: Unable to find app identifier com.apple.AssistantServices" };
+  /*0*/    "Oct  5 00:31:43  wifid[14] <Error>: WiFi:[402618703.480754]: WiFi unquiescing requested by \"locationd\"",
+  /*1*/    "Oct  5 00:32:12  lockdownd[44] <Notice>: 00281000 set_language: Prepending the language list with en",
+  /*2*/    "Oct  5 00:32:12  SpringBoard[3634] <Warning>: Preferred language has changed from 'de' to 'en'. Relaunching.",
+  /*3*/    "Oct  5 00:32:12  com.apple.launchd[1] <Error>: (com.apple.mediaserverd) Exited with code: 254",
+  /*4*/    "Oct  5 00:32:12  com.apple.launchd[1] <Error>: (com.apple.itunesstored) Exited with code: 253",
+  /*5*/    "Oct  5 00:32:12  CommCenterMobileHelper[3654] <Error>: VM_ALLOCATE 920l (mhs1)",
+  /*6*/    "Oct  5 00:32:12  tccd[3640] <Notice>: Exiting due to language change",
+  /*7*/    "Oct  5 00:32:12  mediaserverd[3652] <Error>: libMobileGestalt copySystemVersionDictionaryValue: Could not lookup ReleaseType from system version dictionary",
+  /*8*/    "Oct  5 00:32:12  locationd[45] <Warn",
+  /*9*/    "Warning>: Launch Services: Unable to find app identifier com.apple.AssistantServices" };
 
   @Test
   public void canExtractDate() {
@@ -106,6 +106,14 @@ public class SysLogLineTest {
     Assert.assertEquals(lockdownd.getMessage(), "00281000 set_language: Prepending the language list with en");
     Assert.assertEquals(springBoard.getMessage(), "Preferred language has changed from 'de' to 'en'. Relaunching.");
     Assert.assertEquals(launchd.getMessage(), "(com.apple.mediaserverd) Exited with code: 254");
+
+  }
+
+  @Test
+  public void survivesPartialLines() {
+    SysLogLine startMissing = new SysLogLine(lines[8]);
+    SysLogLine endMissing = new SysLogLine(lines[9]);
+
 
   }
 }

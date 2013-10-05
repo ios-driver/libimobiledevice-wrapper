@@ -16,6 +16,6 @@ package org.libimobiledevice.ios.driver.binding.services;
 
 public interface SysLogListener {
 
-  void onCharacter(char c);
+  void onLog(SysLogLine line);
 }
 

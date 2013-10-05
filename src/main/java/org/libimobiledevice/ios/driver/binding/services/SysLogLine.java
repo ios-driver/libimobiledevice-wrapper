@@ -14,9 +14,6 @@
 
 package org.libimobiledevice.ios.driver.binding.services;
 
-import sun.security.pkcs11.wrapper.CK_DATE;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,45 +25,44 @@ public class SysLogLine {
   private int pid;
   private String level;
   private String message;
+  private String original;
 
   SysLogLine(String line) {
+    original = line;
     // Date
     try {
       String d = Calendar.getInstance().get(Calendar.YEAR) + " " + line.substring(0, 15);
       SimpleDateFormat parser = new SimpleDateFormat("yyyy MMM d HH:mm:ss");
       date = parser.parse(d);
+
+      // process and its pid
+      String rest = line.substring(15);
+      int openingBracketPid = rest.indexOf("[");
+      int closingBracketPid = rest.indexOf("]");
+      // removing the 2 spaces
+      process = rest.substring(2, openingBracketPid);
+      pid = Integer.parseInt(rest.substring(openingBracketPid + 1, closingBracketPid));
+
+      rest = rest.substring(closingBracketPid + 2);
+
+      // level
+      int index = rest.indexOf('>');
+      level = rest.substring(1, index);
+
+      // removing the leading ':'
+      rest = rest.substring(index + 2);
+
+      // and trim leading space
+      message = rest.trim();
     } catch (Exception e) {
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+      System.err.println("Cannot parse line (is it a full line ?)"+original+" , "+e.getMessage());
     }
-
-    // process and its pid
-    String rest = line.substring(15);
-    int openingBracketPid = rest.indexOf("[");
-    int closingBracketPid = rest.indexOf("]");
-    // removing the 2 spaces
-    process = rest.substring(2,openingBracketPid);
-    pid = Integer.parseInt(rest.substring(openingBracketPid+1,closingBracketPid));
-
-    rest = rest.substring(closingBracketPid+2);
-
-    // level
-    int index = rest.indexOf('>');
-    level = rest.substring(1,index);
-
-    // removing the leading ':'
-    rest = rest.substring(index+2);
-
-    // and trim leading space
-    message = rest.trim();
   }
 
   @Override
-  public String toString(){
-    return date.toString();
+  public String toString() {
+    return original;
   }
-
-
-
 
   public Date getDate() {
     return date;
