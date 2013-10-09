@@ -49,6 +49,7 @@ public class DeviceInfo {
 
   private final String raw;
   private final boolean devMode;
+  private final IOSDevice device;
   private String buildVersion;
   private String bluetoothAddress;
   private String boardId;
@@ -68,7 +69,7 @@ public class DeviceInfo {
   private String SupportedDeviceFamilies;
 
   public DeviceInfo(String uuid) throws LibImobileException, SDKException {
-    IOSDevice device = DeviceService.get(uuid);
+    device = DeviceService.get(uuid);
     InformationService service = new InformationService(device);
     String res = service.getValueAsXML(null, null);
 
@@ -81,6 +82,10 @@ public class DeviceInfo {
     }
     this.devMode = service.isDevModeEnabled();
 
+  }
+
+  public IOSDevice getDevice() {
+    return device;
   }
 
   public String getBluetoothAddress() {
