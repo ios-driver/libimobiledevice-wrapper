@@ -52,8 +52,8 @@ public class InformationService {
 
   public boolean isDevModeEnabled() throws SDKException {
     IntBuffer enabled = IntBuffer.allocate(1);
-    throwIfNeeded(
-        information_service_is_developer_mode_enabled(sdk_idevice_information_service_t, enabled));
+    // TODO: freynaud when enabled = false, return code is -1 ?
+    information_service_is_developer_mode_enabled(sdk_idevice_information_service_t, enabled);
     if (enabled.get(0) == 0) {
       return false;
     }
@@ -125,9 +125,17 @@ public class InformationService {
 
   public String getValueAsXML(String domain, String key) throws SDKException {
     PointerByReference ptr = new PointerByReference();
-    throwIfNeeded(
-        information_service_get_value_as_xml(sdk_idevice_information_service_t, domain, key, ptr));
-    return getValue(ptr);
+    int
+        code =
+        information_service_get_value_as_xml(sdk_idevice_information_service_t, domain, key, ptr);
+    if (code == 0) {
+      return getValue(ptr);
+      // seems to be the code for key not found.
+    } else if (code == -1) {
+      return null;
+    } else {
+      throw new SDKException(code);
+    }
   }
 
   public Date getDate() throws SDKException {

@@ -19,11 +19,10 @@ import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
 import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
 import org.libimobiledevice.ios.driver.binding.services.InformationService;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.util.Date;
 
 import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
 
@@ -90,6 +89,12 @@ public class InformationServiceTest {
   public void serviceCanGetValueAsXMLOneKey() throws LibImobileException, SDKException {
     String xml = service.getValueAsXML("com.apple.international", "HostKeyboard");
     System.out.println("xml :" + xml);
+  }
+
+  @Test
+  public void surviveNonExistingKeys() throws LibImobileException, SDKException{
+    String xml = service.getValueAsXML("com.apple.international", "doesn't exist");
+    Assert.assertNull(xml);
   }
 
   @Test(enabled = false)
