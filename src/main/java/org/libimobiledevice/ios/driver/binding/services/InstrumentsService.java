@@ -14,64 +14,21 @@
 
 package org.libimobiledevice.ios.driver.binding.services;
 
-import com.sun.jna.ptr.PointerByReference;
-
 import org.libimobiledevice.ios.driver.binding.exceptions.InstrumentsSDKException;
 
 public class InstrumentsService {
 
 
   private final InstrumentsClient instrumentsClient;
-  private final AutomationClient automationClient;
-  private final ProcessControlClient processControlClient;
-  private final UIAScriptMessageHandler handler;
-  private final UIAExceptionHandler exHandler;
-  private final String bundleId;
   private int pid;
+  private ProcessControlService processControlService;
+  private UIAutomationService uiAutomationService;
 
-  public InstrumentsService(IOSDevice device, String bundleId) throws InstrumentsSDKException {
-    this.bundleId = bundleId;
-
-    handler = new UIAScriptMessageHandler() {
-      @Override
-      public void onMessage(String message) {
-        System.out.println(message);
-      }
-    };
-
-    exHandler = new UIAExceptionHandler() {
-      @Override
-      public void onException(String message) {
-        System.err.println(message);
-      }
-    };
-
+  public InstrumentsService(IOSDevice device) throws InstrumentsSDKException {
     instrumentsClient = new InstrumentsClient(device);
-    automationClient = instrumentsClient.getAutomationClient();
-    automationClient.setMessageHandler(handler);
-    automationClient.setExceptionHandler(exHandler);
-
-    processControlClient = instrumentsClient.getProcessControlClient();
-
-    pid = processControlClient.getPid(bundleId);
-    if (pid > 0) {
-      processControlClient.kill(pid);
-    }
-
-    automationClient.configureLaunchEnvironment(new PointerByReference());
-
-    pid = processControlClient.launchSuspendedProcess(bundleId, null, null);
-    processControlClient.startObserving(pid);
-    processControlClient.resume(pid);
-
-    automationClient.startAgent(pid, bundleId);
-
-    while (!automationClient.isReady()) {
-      sleepWell(500);
-    }
   }
 
-  private void sleepWell(long ms) {
+  public static void sleepWell(long ms) {
     try {
       Thread.sleep(ms);
     } catch (InterruptedException e) {
@@ -79,24 +36,30 @@ public class InstrumentsService {
     }
   }
 
-  /**
-   * executes a script on the device. Doesn't wait for the script to return, and will crash if you
-   * send a script before the previous one has returned.
-   */
-  public void executeScriptNonManaged(String script) throws InstrumentsSDKException {
-    String safe = "try{ " + script + ""
-                  + "} catch (err){"
-                  + "UIALogger.logMessage('there was an error.'+err.message);"
-                  //+ "throw err;"
-                  + "}";
-    automationClient.executeScript(safe, bundleId);
+  public final synchronized ProcessControlService getProcessControlService()
+      throws InstrumentsSDKException {
+    if (processControlService == null) {
+      processControlService = new ProcessControlService(instrumentsClient);
+    }
+    return processControlService;
   }
 
+  public final synchronized UIAutomationService getUIAutomationService()
+      throws InstrumentsSDKException {
+    if (uiAutomationService == null) {
+      uiAutomationService = new UIAutomationService(instrumentsClient, getProcessControlService());
+    }
+    return uiAutomationService;
+  }
+
+
+
   public void free() throws InstrumentsSDKException {
-    processControlClient.stopObserving(pid);
-    processControlClient.kill(pid);
     if (instrumentsClient != null) {
       instrumentsClient.free();
+    }
+    if (processControlService != null) {
+      processControlService.free();
     }
   }
 }

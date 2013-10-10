@@ -6,6 +6,7 @@ import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
 import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
 import org.libimobiledevice.ios.driver.binding.services.InstrumentsService;
+import org.libimobiledevice.ios.driver.binding.services.UIAutomationService;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -66,12 +67,16 @@ public class InstrumentsTest {
       throws InterruptedException, LibImobileException, SDKException, InstrumentsSDKException {
 
     IOSDevice d = DeviceService.get(main);
-    InstrumentsService instruments = new InstrumentsService(d, "com.ebay.iphone");
+    InstrumentsService instruments = new InstrumentsService(d);
 
+    UIAutomationService automation = instruments.getUIAutomationService();
+    automation.startApp("com.ebay.iphone");
     for (int i = 0; i < 10; i++) {
       Thread.sleep(200);
-      instruments.executeScriptNonManaged("UIALogger.logMessage('Hello World!');");
+      automation.executeScriptNonManaged("UIALogger.logMessage('Hello World!');");
     }
+
+    automation.stopApp();
 
     instruments.free();
   }
@@ -96,15 +101,16 @@ public class InstrumentsTest {
   public void parallel()
       throws InterruptedException, LibImobileException, SDKException, InstrumentsSDKException {
     IOSDevice d = DeviceService.get(main);
-    InstrumentsService service = new InstrumentsService(d, "com.yourcompany.UICatalog");
-
-    service.executeScriptNonManaged(s3);
+    InstrumentsService service = new InstrumentsService(d);
+    UIAutomationService automation = service.getUIAutomationService();
+    automation.startApp("com.ebay.iphone");
+    automation.executeScriptNonManaged(s3);
     Thread.sleep(1000);
-    service.executeScriptNonManaged(s6);
+    automation.executeScriptNonManaged(s6);
     Thread.sleep(250);
-    service.executeScriptNonManaged(s7);
+    automation.executeScriptNonManaged(s7);
     Thread.sleep(250);
-    service.executeScriptNonManaged(s8);
+    automation.executeScriptNonManaged(s8);
     Thread.sleep(10000);
 
     System.out.println("DONE\n\n\n");
@@ -201,11 +207,12 @@ public class InstrumentsTest {
       throws InterruptedException, LibImobileException, SDKException, InstrumentsSDKException {
 
     IOSDevice d = DeviceService.get(uuid);
-    InstrumentsService instruments = new InstrumentsService(d, "com.apple.mobilesafari");
-
+    InstrumentsService instruments = new InstrumentsService(d);
+    UIAutomationService automation = instruments.getUIAutomationService();
+    automation.startApp("com.apple.mobilesafari", false);
     for (int i = 0; i < 10; i++) {
       Thread.sleep(200);
-      instruments.executeScriptNonManaged("UIALogger.logMessage('Hello World!');");
+      //instruments.executeScriptNonManaged("UIALogger.logMessage('Hello World!');");
     }
 
     instruments.free();
