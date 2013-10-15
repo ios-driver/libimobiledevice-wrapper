@@ -189,7 +189,7 @@ public class InformationService {
 
     @Override
     public void onLog(SysLogLine line) {
-      if (line.getMessage().contains("SIMToolkit plugin for SpringBoard initialized") &&
+      if (line.getMessage().contains("ALS: SetDisplayFactor: factor=1.0000") &&
           line.getDate().after(after)) {
         isDone = true;
       }
