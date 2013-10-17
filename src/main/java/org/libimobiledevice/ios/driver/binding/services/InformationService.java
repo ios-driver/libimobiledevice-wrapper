@@ -187,6 +187,8 @@ public class InformationService {
       return isDone;
     }
 
+    // TODO ios7 no SIM : Oct 15 10:52:23 iPhone profiled[862] <Notice>: (Note ) profiled: Service stopping.
+    // ios7 wityh sim federicos-iPhone profiled[2961] <Notice>: (Note ) profiled: Service stopping.
     @Override
     public void onLog(SysLogLine line) {
       if (line.getMessage().contains("ALS: SetDisplayFactor: factor=1.0000") &&

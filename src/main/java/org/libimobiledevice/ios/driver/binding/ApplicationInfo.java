@@ -12,7 +12,7 @@
  * the License.
  */
 
-package org.libimobiledevice.ios.driver.binding.model;
+package org.libimobiledevice.ios.driver.binding;
 
 import com.dd.plist.NSArray;
 import com.dd.plist.NSDictionary;

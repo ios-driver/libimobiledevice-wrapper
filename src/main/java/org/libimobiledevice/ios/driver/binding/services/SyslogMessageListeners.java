@@ -18,12 +18,13 @@ import com.sun.jna.Pointer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_read_cb_t;
 
 public class SyslogMessageListeners implements sdk_idevice_syslog_service_read_cb_t {
 
-  private final List<SysLogListener> all = new ArrayList<SysLogListener>();
+  private final List<SysLogListener> all = new CopyOnWriteArrayList<SysLogListener>();
   private StringBuffer buff = new StringBuffer();
 
   @Override

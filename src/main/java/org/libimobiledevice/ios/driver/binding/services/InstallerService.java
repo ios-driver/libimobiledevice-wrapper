@@ -17,10 +17,16 @@ package org.libimobiledevice.ios.driver.binding.services;
 import com.sun.jna.ptr.PointerByReference;
 
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
-import org.libimobiledevice.ios.driver.binding.model.ApplicationInfo;
+import org.libimobiledevice.ios.driver.binding.ApplicationInfo;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static org.libimobiledevice.ios.driver.binding.exceptions.SDKErrorCode.throwIfNeeded;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_free;
@@ -28,17 +34,18 @@ import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrar
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_install_application_from_archive_with_callback;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_new;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_uninstall_application;
-import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t;
 
 public class InstallerService {
 
   private static final Object lock = new Object();
   private final sdk_idevice_installation_service_t service;
+  private final IOSDevice device;
 
   public InstallerService(IOSDevice d) throws SDKException {
     synchronized (lock) {
       PointerByReference ptr = new PointerByReference();
+      this.device = d;
       throwIfNeeded(installation_service_new(d.getSDKHandle(), ptr));
       service = new sdk_idevice_installation_service_t(ptr.getValue());
     }
@@ -56,23 +63,48 @@ public class InstallerService {
     return infos;
   }
 
-  public void install(File ipa, InstallCallback cb) throws SDKException {
-    System.out.println("starting install");
-    final sdk_idevice_installation_service_status_cb_t callback;
+  public void install(final File ipa, final InstallCallback cb) throws SDKException {
+    InformationService info = new InformationService(device);
+    final Date now = info.getDate();
 
-    if (cb == null) {
-      System.err.println("install callback not specified.souting messages");
-      cb = new InstallCallback() {
-        @Override
-        protected void onUpdate(String operation, int percent, String message) {
-          System.out.println(operation + ", " + percent + "% , " + message);
+    ExecutorService es = Executors.newFixedThreadPool(1);
+    final Future<Integer> future = es.submit(new Callable<Integer>() {
+      @Override
+      public Integer call() throws Exception {
+        short res = installation_service_install_application_from_archive_with_callback(service,
+                                                                                        ipa.getAbsolutePath(),
+                                                                                        cb,
+                                                                                        null);
+        return new Integer(res);
+      }
+    });
+
+    SysLogListener checkSyslogForCompletion = new SysLogListener() {
+      @Override
+      public void onLog(SysLogLine line) {
+        if (line.getMessage()
+            .equals("LaunchServices: Adding com.ebay.iphone to registration list")) {
+          if (line.getDate().after(now)) {
+            cb.onUpdate("Done from syslog", 100, "Done");
+            future.cancel(true);
+          }
         }
-      };
+      }
+    };
+
+    device.getSysLogService().addListener(checkSyslogForCompletion);
+
+    try {
+      int res = future.get();
+      throwIfNeeded(res);
+    } catch (InterruptedException e) {
+      // ignore
+    } catch (ExecutionException e) {
+      // ignore
+    } finally {
+      device.getSysLogService().remove(checkSyslogForCompletion);
     }
-    throwIfNeeded(installation_service_install_application_from_archive_with_callback(service,
-                                                                                      ipa.getAbsolutePath(),
-                                                                                      cb,
-                                                                                      null));
+
   }
 
   public void uninstall(String bundleId) throws SDKException {

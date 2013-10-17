@@ -24,7 +24,11 @@ public abstract class InstallCallback implements sdk_idevice_installation_servic
   public void apply(Pointer operation, Pointer message, int precent_complete, Pointer user_data) {
     String op = operation.getString(0);
     String msg = message.getString(0);
-    onUpdate(op, precent_complete, msg);
+    int percent = precent_complete;
+    if (precent_complete == -1) {
+      percent = 100;
+    }
+    onUpdate(op, percent, msg);
   }
 
   protected abstract void onUpdate(String operation, int percent, String message);
