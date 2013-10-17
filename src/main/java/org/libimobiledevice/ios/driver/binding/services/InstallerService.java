@@ -16,8 +16,8 @@ package org.libimobiledevice.ios.driver.binding.services;
 
 import com.sun.jna.ptr.PointerByReference;
 
-import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.ApplicationInfo;
+import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 
 import java.io.File;
 import java.util.Date;
@@ -64,6 +64,9 @@ public class InstallerService {
   }
 
   public void install(final File ipa, final InstallCallback cb) throws SDKException {
+    if (!ipa.exists()) {
+      throw new SDKException("the ipa file " + ipa + " doesn't exist.");
+    }
     InformationService info = new InformationService(device);
     final Date now = info.getDate();
 
