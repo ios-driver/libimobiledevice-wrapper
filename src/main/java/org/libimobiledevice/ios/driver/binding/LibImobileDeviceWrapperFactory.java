@@ -43,6 +43,7 @@ public class LibImobileDeviceWrapperFactory {
     unpack("libssl.1.0.0.dylib", out);
     unpack("libusbmuxd.dylib", out);
     unpack("libz.1.dylib", out);
+    unpack("libzip.dylib", out);
     unpack("libxml2.dylib", out);
 //    unpack("liblzma.5.dylib", out);
 //    unpack("libiconv.2.dylib", out);

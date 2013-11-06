@@ -51,38 +51,6 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.3</version>
-                <executions>
-                    <execution>
-                        <id>create-executable-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-
-                </executions>
-                <configuration>
-
-                    <archive>
-
-                        <manifest>
-                            <mainClass>org.libimobiledevice.binding.raw.Launcher</mainClass>
-                        </manifest>
-
-
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <finalName>test-loading-jna</finalName>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <outputDirectory>.</outputDirectory>
-                </configuration>
-
-            </plugin>
         </plugins>
     </build>
 </project>
