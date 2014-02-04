@@ -57,6 +57,7 @@ public class DeviceInfo {
   private String chipID;
   private String deviceClass;
   private String deviceColor;
+  private boolean passwordProtectedLocked;
   private String productType;
   private String productVersion;
   private String uniqueDeviceID;
@@ -128,6 +129,10 @@ public class DeviceInfo {
     return modelNumber;
   }
 
+  public boolean getPasswordProtectedLocked() {
+    return passwordProtectedLocked;
+  }
+
   public String getProductType() {
     return productType;
   }
@@ -159,6 +164,9 @@ public class DeviceInfo {
     firmwareVersion = get(rootDict, "FirmwareVersion");
     hardwareModel = get(rootDict, "HardwareModel");
     modelNumber = get(rootDict, "ModelNumber");
+    passwordProtectedLocked =
+        get(rootDict, "PasswordProtected") != null && get(rootDict, "PasswordProtected")
+            .contains("true");
     productType = get(rootDict, "ProductType");
     productVersion = get(rootDict, "ProductVersion");
     uniqueDeviceID = get(rootDict, "UniqueDeviceID");
@@ -213,8 +221,8 @@ public class DeviceInfo {
      * Initialize the document builder factory so that it can be reuused and does not need to be
      * reinitialized for each new parsing.
      *
-     * @throws javax.xml.parsers.ParserConfigurationException
-     *          If the parser configuration is not supported on your system.
+     * @throws javax.xml.parsers.ParserConfigurationException If the parser configuration is not
+     *                                                        supported on your system.
      */
     private static synchronized void initDocBuilderFactory() throws ParserConfigurationException {
       docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -253,7 +261,7 @@ public class DeviceInfo {
      *
      * @param f The XML property list file.
      * @return The root object of the property list. This is usally a NSDictionary but can also be a
-     *         NSArray.
+     * NSArray.
      * @throws Exception When an error occurs during parsing.
      * @see javax.xml.parsers.DocumentBuilder#parse(java.io.File)
      */
@@ -270,7 +278,7 @@ public class DeviceInfo {
      *
      * @param bytes The byte array containing the property list's data.
      * @return The root object of the property list. This is usally a NSDictionary but can also be a
-     *         NSArray.
+     * NSArray.
      * @throws Exception When an error occurs during parsing.
      */
     public static NSObject parse(final byte[] bytes) throws Exception {
@@ -283,7 +291,7 @@ public class DeviceInfo {
      *
      * @param is The input stream pointing to the property list's data.
      * @return The root object of the property list. This is usally a NSDictionary but can also be a
-     *         NSArray.
+     * NSArray.
      * @throws Exception When an error occurs during parsing.
      * @see javax.xml.parsers.DocumentBuilder#parse(java.io.InputStream)
      */
