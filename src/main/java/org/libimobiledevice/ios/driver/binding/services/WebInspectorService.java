@@ -47,9 +47,7 @@ public class WebInspectorService {
   public String receiveMessage() throws LibImobileException {
     synchronized (this) {
       PointerByReference plist = new PointerByReference();
-
-      throwIfNeeded(webinspector_receive_with_timeout(webinspector_client, plist, 5000));
-
+      webinspector_receive_with_timeout(webinspector_client, plist, 5000);
       PointerByReference plist_xml = new PointerByReference();
       IntBuffer buff = IntBuffer.allocate(1);
       PlistLibrary.plist_to_xml(plist.getValue(), plist_xml, buff);
@@ -62,31 +60,13 @@ public class WebInspectorService {
   }
 
   public void sendMessage(String xml) throws LibImobileException {
-    synchronized (this) {
-      PointerByReference ptr = new PointerByReference();
-      PlistLibrary.plist_from_xml(xml, xml.length(), ptr);
-      throwIfNeeded(webinspector_send(webinspector_client, ptr.getValue()));
-    }
+    PointerByReference ptr = new PointerByReference();
+    PlistLibrary.plist_from_xml(xml, xml.length(), ptr);
+    throwIfNeeded(webinspector_send(webinspector_client, ptr.getValue()));
   }
 
   public void stopWebInspector() throws LibImobileException {
     throwIfNeeded(webinspector_client_free(webinspector_client));
-//    synchronized (this) {
-//      if (web_client != null) {
-//        stopping = true;
-//        while (busy) {
-//          sleep(250);
-//        }
-//        try {
-//          throwIfNeeded(lib.webinspector_stopService(web_client));
-//        } finally {
-//          web_client = null;
-//          stopping = false;
-//
-//        }
-//      }
-//    }
-
   }
 }
 
