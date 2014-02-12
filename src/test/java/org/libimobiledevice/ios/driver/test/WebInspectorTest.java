@@ -1,11 +1,13 @@
 package org.libimobiledevice.ios.driver.test;
 
+import org.junit.Before;
 import org.libimobiledevice.ios.driver.binding.LibImobileDeviceWrapperFactory;
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
 import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
 import org.libimobiledevice.ios.driver.binding.services.WebInspectorService;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
@@ -14,12 +16,19 @@ public class WebInspectorTest {
 
   private LibImobileDeviceWrapperFactory factory = LibImobileDeviceWrapperFactory.INSTANCE;
 
-  @Test(groups = "smoke")
+  IOSDevice device;
+  WebInspectorService service;
+
+
+  @BeforeMethod
+  public void setup() throws LibImobileException, SDKException {
+    device = DeviceService.get(main);
+    service = new WebInspectorService(device);
+  }
+
+  @Test(groups = "smoke",invocationCount = 5)
   public void webInspectorClient() throws InterruptedException, LibImobileException, SDKException {
 
-    final IOSDevice device = DeviceService.get(main);
-
-    final WebInspectorService service = new WebInspectorService(device);
     service.startWebInspector();
 
     new Thread(new Runnable() {
@@ -34,6 +43,7 @@ public class WebInspectorTest {
 
           } catch (Exception e) {
             System.err.println(e.getMessage());
+            return;
           }
 
         }
@@ -55,9 +65,9 @@ public class WebInspectorTest {
                         " </dict>" + "\n" +
                         "</plist>" + "\n");
 
-    Thread.sleep(100000);
+    Thread.sleep(3000);
     service.stopWebInspector();
-    System.out.println("STOPPED");
+
   }
 
 

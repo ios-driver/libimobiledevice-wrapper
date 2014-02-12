@@ -32,6 +32,10 @@ public class WebInspectorService {
 
   private final IOSDevice device;
   private webinspector_client_t webinspector_client;
+  private volatile boolean listening;
+  private volatile boolean stopping;
+  private final Object listeningLock = new Object();
+  private final Object stoppingLock = new Object();
 
   public WebInspectorService(IOSDevice device) {
     this.device = device;
@@ -42,19 +46,33 @@ public class WebInspectorService {
     throwIfNeeded(
         webinspector_client_start_service(device.getHandle(), ptr, "libimobile-java"));
     webinspector_client = new webinspector_client_t(ptr.getValue());
+    stopping = false;
+    listening = false;
   }
 
   public String receiveMessage() throws LibImobileException {
-    synchronized (this) {
-      PointerByReference plist = new PointerByReference();
-      webinspector_receive_with_timeout(webinspector_client, plist, 5000);
-      PointerByReference plist_xml = new PointerByReference();
-      IntBuffer buff = IntBuffer.allocate(1);
-      PlistLibrary.plist_to_xml(plist.getValue(), plist_xml, buff);
-      if (plist_xml != null && plist_xml.getValue() != null) {
-        return plist_xml.getValue().getString(0);
-      } else {
-        return null;
+
+    synchronized (stoppingLock) {
+      if (stopping) {
+        throw new RuntimeException("inspector stopping.");
+      }
+    }
+    synchronized (listeningLock) {
+      listening = true;
+      try {
+        listening = true;
+        PointerByReference plist = new PointerByReference();
+        webinspector_receive_with_timeout(webinspector_client, plist, 5000);
+        PointerByReference plist_xml = new PointerByReference();
+        IntBuffer buff = IntBuffer.allocate(1);
+        PlistLibrary.plist_to_xml(plist.getValue(), plist_xml, buff);
+        if (plist_xml != null && plist_xml.getValue() != null) {
+          return plist_xml.getValue().getString(0);
+        } else {
+          return null;
+        }
+      } finally {
+        listening = false;
       }
     }
   }
@@ -66,6 +84,19 @@ public class WebInspectorService {
   }
 
   public void stopWebInspector() throws LibImobileException {
+    synchronized (stoppingLock) {
+      stopping = true;
+    }
+    synchronized (listeningLock) {
+      while (listening) {
+        try {
+          Thread.sleep(1000);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+
     throwIfNeeded(webinspector_client_free(webinspector_client));
   }
 }
