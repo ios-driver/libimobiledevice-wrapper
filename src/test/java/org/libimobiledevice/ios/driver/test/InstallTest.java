@@ -65,7 +65,7 @@ public class InstallTest {
   public void canListApplications() throws LibImobileException, SDKException {
     IOSDevice d = DeviceService.get(main);
     InstallerService service = new InstallerService(d);
-    List<ApplicationInfo> l = service.listApplications();
+    List<ApplicationInfo> l = service.listApplications(InstallerService.ApplicationType.SYSTEM);
     for (ApplicationInfo app : l){
       System.out.println(app.getApplicationId());
     }
