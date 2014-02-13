@@ -7,7 +7,7 @@ The Java source code is licensed under the Apache License 2.0.
 
 Native shared library dependencies alongside licenses and URLs:
 * libimobiledevice (LGPL 2.1) - http://cgit.sukimashita.com/libimobiledevice.git/
-* libimobiledevice-instruments (Commercial License) - http://mirell.de
+* libimobiledevice-instruments (Commercial License) - http://mirell.de (removed from the project)
 * libimobiledevice-sdk (LGPL 2.1) - http://cgit.sukimashita.com/libimobiledevice-sdk.git/
 * libplist (LGPL 2.1) - http://cgit.sukimashita.com/libplist.git/
 * libusbmuxd (LGPL 2.1) -http://cgit.sukimashita.com/usbmuxd.git/

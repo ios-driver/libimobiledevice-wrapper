@@ -1,6 +1,5 @@
 package org.libimobiledevice.ios.driver.test;
 
-import org.libimobiledevice.ios.driver.binding.LibImobileDeviceWrapperFactory;
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
@@ -14,7 +13,6 @@ import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
 
 public class IDeviceNewThreadTest {
 
-  private LibImobileDeviceWrapperFactory factory = LibImobileDeviceWrapperFactory.INSTANCE;
 
   @DataProvider(name = "devices", parallel = true)
   public Object[][] createData1() {

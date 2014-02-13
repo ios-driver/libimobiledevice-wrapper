@@ -16,7 +16,8 @@ package org.libimobiledevice.ios.driver.binding.services;
 
 import com.sun.jna.ptr.PointerByReference;
 
-import org.libimobiledevice.ios.driver.binding.ApplicationInfo;
+import org.libimobiledevice.ios.driver.binding.model.ApplicationInfo;
+import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 
 import java.io.File;
@@ -30,6 +31,7 @@ import java.util.concurrent.Future;
 
 import static org.libimobiledevice.ios.driver.binding.exceptions.SDKErrorCode.throwIfNeeded;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_free;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_get_application_list;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_get_application_list_as_xml;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_install_application_from_archive_with_callback;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_new;
@@ -42,6 +44,23 @@ public class InstallerService {
   private final sdk_idevice_installation_service_t service;
   private final IOSDevice device;
 
+  public void copy(String bundleId, File dest) {
+
+  }
+
+  public static enum ApplicationType {
+    SYSTEM(2), USER(1), ALL(0);
+    private final int code;
+
+    ApplicationType(int code) {
+      this.code = code;
+    }
+
+    public int code() {
+      return code;
+    }
+  }
+
   public InstallerService(IOSDevice d) throws SDKException {
     synchronized (lock) {
       PointerByReference ptr = new PointerByReference();
@@ -51,11 +70,22 @@ public class InstallerService {
     }
   }
 
-  public List<ApplicationInfo> listApplications() throws SDKException {
+  public List<ApplicationInfo> listApplications(ApplicationType type) throws SDKException {
     PointerByReference ptr = new PointerByReference();
-    throwIfNeeded(installation_service_get_application_list_as_xml(service, 1, ptr));
+    throwIfNeeded(installation_service_get_application_list_as_xml(service, type.code(), ptr));
     String all = ptr.getValue().getString(0);
     return parse(all);
+  }
+
+
+  public ApplicationInfo getApplication(String bundleId) throws SDKException {
+    List<ApplicationInfo> all = listApplications(ApplicationType.ALL);
+    for (ApplicationInfo app : all){
+      if (bundleId.equals(app.getApplicationId())){
+        return app;
+      }
+    }
+    throw new SDKException("Cannot find "+bundleId);
   }
 
   private List<ApplicationInfo> parse(String raw) {

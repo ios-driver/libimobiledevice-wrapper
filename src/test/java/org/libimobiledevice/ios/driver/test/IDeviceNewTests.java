@@ -1,7 +1,6 @@
 package org.libimobiledevice.ios.driver.test;
 
 import org.junit.Assert;
-import org.libimobiledevice.ios.driver.binding.LibImobileDeviceWrapperFactory;
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
@@ -12,8 +11,6 @@ import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
 
 public class IDeviceNewTests {
 
-
-  private LibImobileDeviceWrapperFactory factory = LibImobileDeviceWrapperFactory.INSTANCE;
 
   @Test(groups = "smoke")
   public void device() throws LibImobileException, SDKException {

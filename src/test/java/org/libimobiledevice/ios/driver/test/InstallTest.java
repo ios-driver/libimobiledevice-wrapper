@@ -2,7 +2,7 @@ package org.libimobiledevice.ios.driver.test;
 
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
-import org.libimobiledevice.ios.driver.binding.ApplicationInfo;
+import org.libimobiledevice.ios.driver.binding.model.ApplicationInfo;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
 import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
 import org.libimobiledevice.ios.driver.binding.services.InstallCallback;
@@ -65,7 +65,7 @@ public class InstallTest {
   public void canListApplications() throws LibImobileException, SDKException {
     IOSDevice d = DeviceService.get(main);
     InstallerService service = new InstallerService(d);
-    List<ApplicationInfo> l = service.listApplications();
+    List<ApplicationInfo> l = service.listApplications(InstallerService.ApplicationType.SYSTEM);
     for (ApplicationInfo app : l){
       System.out.println(app.getApplicationId());
     }

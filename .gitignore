@@ -1,8 +1,3 @@
-src/main/resources.zip
-*.h
-*.dylib
-*.so
-*.dll
 .settings
 target/
 .classpath

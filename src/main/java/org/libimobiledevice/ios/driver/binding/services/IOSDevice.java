@@ -18,13 +18,12 @@ import com.sun.jna.ptr.PointerByReference;
 
 import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
-import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceInstrumentsLibrary;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary.*;
 import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary;
 
 import java.util.logging.Logger;
 
 import static org.libimobiledevice.ios.driver.binding.exceptions.ErrorCode.throwIfNeeded;
-import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceInstrumentsLibrary.idevice_t;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary.idevice_new;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_free;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_new_from_idevice;
@@ -35,7 +34,7 @@ public class IOSDevice {
 
   private static final Logger log = Logger.getLogger(IOSDevice.class.getName());
   private final String uuid;
-  private final idevice_t handle;
+  private final idevice_t  handle;
   private final sdk_idevice_t sdk_handle;
   private SysLogService sysLogService;
 
@@ -48,7 +47,7 @@ public class IOSDevice {
 
     PointerByReference ptr = new PointerByReference();
     throwIfNeeded(idevice_new(ptr, uuid));
-    handle = new ImobiledeviceInstrumentsLibrary.idevice_t(ptr.getValue());
+    handle = new idevice_t(ptr.getValue());
 
     PointerByReference sdk = new PointerByReference();
     sdk_idevice_new_from_idevice(sdk, handle.getPointer());
