@@ -44,9 +44,6 @@ public class InstallerService {
   private final sdk_idevice_installation_service_t service;
   private final IOSDevice device;
 
-  public void copy(String bundleId, File dest) {
-
-  }
 
   public static enum ApplicationType {
     SYSTEM(2), USER(1), ALL(0);

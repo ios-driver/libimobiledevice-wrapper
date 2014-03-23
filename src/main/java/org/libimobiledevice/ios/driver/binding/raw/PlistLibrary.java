@@ -33,6 +33,7 @@ import java.nio.LongBuffer;
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
 public class PlistLibrary implements Library {
+        private static final boolean initialized = JNAInit.init();
 	public static final String JNA_LIBRARY_NAME = "plist";
 	public static final NativeLibrary JNA_NATIVE_LIB = NativeLibrary.getInstance(PlistLibrary.JNA_LIBRARY_NAME);
 	static {
