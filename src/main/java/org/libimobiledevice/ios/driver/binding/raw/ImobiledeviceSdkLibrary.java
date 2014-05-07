@@ -63,10 +63,10 @@ public class ImobiledeviceSdkLibrary implements Library {
 			this.version = version;
 		}
 		public static class ByReference extends sdk_idevice_app_info_t implements Structure.ByReference {
-			
+
 		};
 		public static class ByValue extends sdk_idevice_app_info_t implements Structure.ByValue {
-			
+
 		};
 	};
 	public interface sdk_idevice_installation_service_status_cb_t extends Callback {
@@ -75,120 +75,127 @@ public class ImobiledeviceSdkLibrary implements Library {
 	public interface sdk_idevice_syslog_service_read_cb_t extends Callback {
 		void apply(byte c, Pointer user_data);
 	};
-	@Deprecated 
+	@Deprecated
 	public static native void sdk_idevice_free_string(Pointer s);
 	public static native void sdk_idevice_free_string(ByteBuffer s);
 	public static native void sdk_idevice_set_debug_level(int level);
-	@Deprecated 
+	@Deprecated
 	public static native short sdk_idevice_new_from_idevice(Pointer sdk_device, Pointer idevice);
 	public static native short sdk_idevice_new_from_idevice(PointerByReference sdk_device, Pointer idevice);
-	@Deprecated 
+	@Deprecated
 	public static native short sdk_idevice_new(Pointer sdk_device, Pointer udid);
 	public static native short sdk_idevice_new(PointerByReference sdk_device, String udid);
 	public static native short sdk_idevice_new(PointerByReference sdk_device, Pointer udid);
-	@Deprecated 
+	@Deprecated
 	public static native short sdk_idevice_free(Pointer sdk_device);
 	public static native short sdk_idevice_free(ImobiledeviceSdkLibrary.sdk_idevice_t sdk_device);
-	@Deprecated 
+	@Deprecated
 	public static native Pointer sdk_idevice_get_idevice(Pointer sdk_device);
 	public static native Pointer sdk_idevice_get_idevice(ImobiledeviceSdkLibrary.sdk_idevice_t sdk_device);
-	@Deprecated 
+	@Deprecated
 	public static native short information_service_new(Pointer device, Pointer service);
 	public static native short information_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
 	public static native short information_service_new(Pointer device, PointerByReference service);
-	@Deprecated 
+	@Deprecated
 	public static native short information_service_free(Pointer service);
 	public static native short information_service_free(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service);
-	@Deprecated 
+	@Deprecated
 	public static native short information_service_get_device_name(Pointer service, PointerByReference device_name);
 	public static native short information_service_get_device_name(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference device_name);
-	@Deprecated 
+	@Deprecated
 	public static native short information_service_set_device_name(Pointer service, Pointer device_name);
 	public static native short information_service_set_device_name(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, String device_name);
-	@Deprecated 
+	@Deprecated
 	public static native short information_service_get_device_type(Pointer service, PointerByReference device_type);
 	public static native short information_service_get_device_type(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference device_type);
-	@Deprecated 
+	@Deprecated
 	public static native short information_service_get_product_version(Pointer service, PointerByReference product_version);
 	public static native short information_service_get_product_version(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference product_version);
-	@Deprecated 
+	@Deprecated
 	public static native short information_service_get_language(Pointer service, PointerByReference language_code);
 	public static native short information_service_get_language(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference language_code);
-	@Deprecated 
+	@Deprecated
 	public static native short information_service_set_language(Pointer service, Pointer language_code);
 	public static native short information_service_set_language(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, String language_code);
-	@Deprecated 
+	@Deprecated
 	public static native short information_service_get_locale(Pointer service, PointerByReference locale_code);
 	public static native short information_service_get_locale(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference locale_code);
-	@Deprecated 
+	@Deprecated
 	public static native short information_service_set_locale(Pointer service, Pointer locale_code);
 	public static native short information_service_set_locale(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, String locale_code);
-	@Deprecated 
+	@Deprecated
 	public static native short information_service_get_value_as_xml(Pointer service, Pointer domain, Pointer key, PointerByReference xml);
 	public static native short information_service_get_value_as_xml(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, String domain, String key, PointerByReference xml);
-	@Deprecated 
+	@Deprecated
 	public static native short information_service_is_developer_mode_enabled(Pointer service, IntByReference enabled);
 	public static native short information_service_is_developer_mode_enabled(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, IntBuffer enabled);
-	@Deprecated 
+	@Deprecated
 	public static native short installation_service_new(Pointer device, Pointer service);
 	public static native short installation_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
 	public static native short installation_service_new(Pointer device, PointerByReference service);
-	@Deprecated 
+	@Deprecated
 	public static native short installation_service_free(Pointer service);
 	public static native short installation_service_free(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service);
-	@Deprecated 
+	@Deprecated
 	public static native short installation_service_install_application_from_archive(Pointer service, Pointer archive_filename);
 	public static native short installation_service_install_application_from_archive(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, String archive_filename);
-	@Deprecated 
+	@Deprecated
 	public static native short installation_service_install_application_from_archive_with_callback(Pointer service, Pointer archive_filename, ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t callback, Pointer user_data);
 	public static native short installation_service_install_application_from_archive_with_callback(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, String archive_filename, ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t callback, Pointer user_data);
-	@Deprecated 
+	@Deprecated
 	public static native short installation_service_uninstall_application_with_callback(Pointer service, Pointer bundle_identifier, ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t callback, Pointer user_data);
 	public static native short installation_service_uninstall_application_with_callback(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, String bundle_identifier, ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t callback, Pointer user_data);
-	@Deprecated 
+	@Deprecated
 	public static native short installation_service_uninstall_application(Pointer service, Pointer bundle_identifier);
 	public static native short installation_service_uninstall_application(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, String bundle_identifier);
-	@Deprecated 
+	@Deprecated
 	public static native short installation_service_get_application_list(Pointer service, int type, PointerByReference app_info_list, IntByReference count);
 	public static native short installation_service_get_application_list(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, int type, ImobiledeviceSdkLibrary.sdk_idevice_app_info_t.ByReference app_info_list, IntBuffer count);
 	public static native short installation_service_get_application_list(Pointer service, int type, ImobiledeviceSdkLibrary.sdk_idevice_app_info_t.ByReference app_info_list, IntByReference count);
-	@Deprecated 
+	@Deprecated
 	public static native short installation_service_get_application_list_as_xml(Pointer installservice, int type, PointerByReference xml);
 	public static native short installation_service_get_application_list_as_xml(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t installservice, int type, PointerByReference xml);
-	@Deprecated 
+	@Deprecated
 	public static native short installation_service_application_list_free(Pointer service, ImobiledeviceSdkLibrary.sdk_idevice_app_info_t app_info_list, int count);
 	public static native short installation_service_application_list_free(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, ImobiledeviceSdkLibrary.sdk_idevice_app_info_t app_info_list, int count);
-	@Deprecated 
+	@Deprecated
 	public static native short syslog_service_new(Pointer device, Pointer service);
 	public static native short syslog_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
 	public static native short syslog_service_new(Pointer device, PointerByReference service);
-	@Deprecated 
+	@Deprecated
 	public static native short syslog_service_free(Pointer service);
 	public static native short syslog_service_free(ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_t service);
-	@Deprecated 
+	@Deprecated
 	public static native short syslog_service_start_capture(Pointer service, ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_read_cb_t callback, Pointer user_data);
 	public static native short syslog_service_start_capture(ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_t service, ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_read_cb_t callback, Pointer user_data);
-	@Deprecated 
+	@Deprecated
 	public static native short syslog_service_stop_capture(Pointer service);
 	public static native short syslog_service_stop_capture(ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_t service);
-	@Deprecated 
+	@Deprecated
 	public static native short debug_service_new(Pointer device, Pointer service);
 	public static native short debug_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
 	public static native short debug_service_new(Pointer device, PointerByReference service);
-	@Deprecated 
+	@Deprecated
 	public static native short debug_service_free(Pointer service);
 	public static native short debug_service_free(ImobiledeviceSdkLibrary.sdk_idevice_debug_service_t service);
-	@Deprecated 
+	@Deprecated
 	public static native short debug_service_launch_application_by_bundle_identifier(Pointer service, Pointer bundle_identifier, PointerByReference environment, PointerByReference arguments, IntByReference pid);
 	public static native short debug_service_launch_application_by_bundle_identifier(ImobiledeviceSdkLibrary.sdk_idevice_debug_service_t service, String bundle_identifier, PointerByReference environment, PointerByReference arguments, IntBuffer pid);
-	@Deprecated 
+
+
+        public static native short screenshot_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
+        public static native short screenshot_service_free(ImobiledeviceSdkLibrary.sdk_idevice_screenshot_service_t service);
+        public static native short screenshot_service_take_screenshot(ImobiledeviceSdkLibrary.sdk_idevice_screenshot_service_t service,PointerByReference data,IntBuffer size);
+
+
+        @Deprecated
 	public static native short app_container_service_new(Pointer device, Pointer service);
 	public static native short app_container_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
 	public static native short app_container_service_new(Pointer device, PointerByReference service);
-	@Deprecated 
+	@Deprecated
 	public static native short app_container_service_free(Pointer service);
 	public static native short app_container_service_free(ImobiledeviceSdkLibrary.sdk_idevice_app_container_service_t service);
-	@Deprecated 
+	@Deprecated
 	public static native short app_container_service_empty_application_cache(Pointer service, Pointer bundle_identifier);
 	public static native short app_container_service_empty_application_cache(ImobiledeviceSdkLibrary.sdk_idevice_app_container_service_t service, String bundle_identifier);
 	/** Pointer to unknown (opaque) type */
@@ -200,6 +207,17 @@ public class ImobiledeviceSdkLibrary implements Library {
 			super();
 		}
 	};
+
+
+        /** Pointer to unknown (opaque) type */
+        public static class sdk_idevice_screenshot_service_t extends PointerType {
+          public sdk_idevice_screenshot_service_t(Pointer address) {
+            super(address);
+          }
+          public sdk_idevice_screenshot_service_t() {
+            super();
+          }
+        };
 	/** Pointer to unknown (opaque) type */
 	public static class sdk_idevice_t extends PointerType {
 		public sdk_idevice_t(Pointer address) {

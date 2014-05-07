@@ -64,6 +64,7 @@ public class IOSDevice {
   }
 
   public void free() {
+    DeviceService.remove(uuid);
     sdk_idevice_free(sdk_handle);
   }
 

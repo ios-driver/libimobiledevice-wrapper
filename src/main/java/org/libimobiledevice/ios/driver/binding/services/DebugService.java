@@ -45,12 +45,11 @@ public class DebugService {
     PointerByReference envt = new PointerByReference();
     PointerByReference args = new PointerByReference();
     IntBuffer pidptr = IntBuffer.allocate(1);
-    throwIfNeeded(
+    int res =
         debug_service_launch_application_by_bundle_identifier(service, bundleId, envt, args,
-                                                              pidptr));
+                                                              pidptr);
     int pid = pidptr.get(0);
     return pid;
-
   }
 }
 

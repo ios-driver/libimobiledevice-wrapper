@@ -113,5 +113,6 @@ public class ApplicationInfo {
   public String toString() {
     return getApplicationId() + ":\n" + properties.toString();
   }
+
 }
 
