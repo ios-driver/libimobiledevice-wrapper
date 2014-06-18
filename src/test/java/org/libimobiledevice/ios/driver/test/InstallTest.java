@@ -1,6 +1,5 @@
 package org.libimobiledevice.ios.driver.test;
 
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.model.ApplicationInfo;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
@@ -31,7 +30,7 @@ public class InstallTest {
 //  }
 //
   @Test(groups = "smoke")
-  public void deviceCanInstall() throws LibImobileException, SDKException {
+  public void deviceCanInstall() throws SDKException {
     IOSDevice d = DeviceService.get(main);
     InstallerService service = new InstallerService(d);
     //SysLogService s2 = d.getSysLogService();
@@ -43,10 +42,11 @@ public class InstallTest {
         sout(operation, percent, message);
       }
     };
-    File ui = new File("/Users/freynaud/out/com.yourcompany.UICatalog.ipa");
+    File ui = new File("/Users/freynaud/UICatalog.ipa");
+//    File ui = new File("/Users/freynaud/out/com.yourcompany.UICatalog.ipa");
     File eBay = new File("/Users/freynaud/tmp/com.ebay.iphone.ipa");
 
-    service.install(eBay, cb);
+    service.install(ui, cb);
 
     service.free();
 //    service.install(new File("/Users/freynaud/Downloads/ebay_iphone_enterprise_3.2.0a1_build6.ipa"));
@@ -62,13 +62,23 @@ public class InstallTest {
   }
 
   @Test
-  public void canListApplications() throws LibImobileException, SDKException {
+  public void canListApplications() throws SDKException {
     IOSDevice d = DeviceService.get(main);
     InstallerService service = new InstallerService(d);
     List<ApplicationInfo> l = service.listApplications(InstallerService.ApplicationType.SYSTEM);
-    for (ApplicationInfo app : l){
+    for (ApplicationInfo app : l) {
       System.out.println(app.getApplicationId());
     }
+    service.free();
+  }
+
+  @Test
+  public void canListApplication() throws SDKException {
+    IOSDevice d = DeviceService.get(main);
+    InstallerService service = new InstallerService(d);
+    ApplicationInfo app = service.getApplication("com.apple.mobilesafari");
+    System.out.println(app);
+
     service.free();
   }
 
@@ -83,7 +93,7 @@ public class InstallTest {
 //
 //
   @Test(dependsOnMethods = "deviceCanInstall")
-  public void deviceCanUninstall() throws SDKException, LibImobileException {
+  public void deviceCanUninstall() throws SDKException {
     IOSDevice d = DeviceService.get(main);
     InstallerService service = new InstallerService(d);
     //service.uninstall("com.ebay.iphone");

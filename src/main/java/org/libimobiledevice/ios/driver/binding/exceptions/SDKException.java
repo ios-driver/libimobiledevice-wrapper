@@ -14,7 +14,7 @@
 
 package org.libimobiledevice.ios.driver.binding.exceptions;
 
-public class SDKException extends libImobileDeviceWrapperException {
+public class SDKException extends Exception {
 
   private final SDKErrorCode code;
 
@@ -26,12 +26,18 @@ public class SDKException extends libImobileDeviceWrapperException {
       }
     }
     System.err
-        .println("Cannot find the returned error code for the SDK call.Assigning unknown.");
+        .println("Cannot find the returned error code ("+code+")for the SDK call.Assigning unknown.");
     this.code = SDKErrorCode.SDK_UNKNOWN_ERROR_CODE;
   }
 
   public SDKException(String message) {
     super(message);
     code = SDKErrorCode.SDK_UNKNOWN_ERROR_CODE;
+  }
+
+  @Override
+  public String getMessage(){
+    String base = super.getMessage();
+    return ""+this.code+" : " + base;
   }
 }

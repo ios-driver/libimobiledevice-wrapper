@@ -1,7 +1,6 @@
 package org.libimobiledevice.ios.driver.test;
 
 import org.junit.Assert;
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
 import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
@@ -13,19 +12,19 @@ public class IDeviceNewTests {
 
 
   @Test(groups = "smoke")
-  public void device() throws LibImobileException, SDKException {
+  public void device() throws SDKException {
     IOSDevice d = DeviceService.get(main);
     d.free();
 
   }
 
   @Test
-  public void reportNotConnectedDevice() throws LibImobileException, SDKException {
+  public void reportNotConnectedDevice() throws SDKException {
     DeviceService.get("idontexistaf579e27d166349dc8a1989503ba5b4f");
   }
 
   @Test
-  public void deviceIsSingleton() throws LibImobileException, SDKException {
+  public void deviceIsSingleton() throws SDKException {
     IOSDevice device = DeviceService.get(main);
     IOSDevice device2 = DeviceService.get(main);
     Assert.assertTrue(device == device2);

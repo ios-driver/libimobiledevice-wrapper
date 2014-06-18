@@ -16,9 +16,8 @@ package org.libimobiledevice.ios.driver.binding.services;
 
 import com.sun.jna.ptr.PointerByReference;
 
-import org.libimobiledevice.ios.driver.binding.model.ApplicationInfo;
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
+import org.libimobiledevice.ios.driver.binding.model.ApplicationInfo;
 
 import java.io.File;
 import java.util.Date;
@@ -31,7 +30,6 @@ import java.util.concurrent.Future;
 
 import static org.libimobiledevice.ios.driver.binding.exceptions.SDKErrorCode.throwIfNeeded;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_free;
-import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_get_application_list;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_get_application_list_as_xml;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_install_application_from_archive_with_callback;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.installation_service_new;
@@ -77,12 +75,12 @@ public class InstallerService {
 
   public ApplicationInfo getApplication(String bundleId) throws SDKException {
     List<ApplicationInfo> all = listApplications(ApplicationType.ALL);
-    for (ApplicationInfo app : all){
-      if (bundleId.equals(app.getApplicationId())){
+    for (ApplicationInfo app : all) {
+      if (bundleId.equals(app.getApplicationId())) {
         return app;
       }
     }
-    throw new SDKException("Cannot find "+bundleId);
+    throw new SDKException("Cannot find " + bundleId);
   }
 
   private List<ApplicationInfo> parse(String raw) {
@@ -101,10 +99,10 @@ public class InstallerService {
     final Future<Integer> future = es.submit(new Callable<Integer>() {
       @Override
       public Integer call() throws Exception {
-        short res = installation_service_install_application_from_archive_with_callback(service,
-                                                                                        ipa.getAbsolutePath(),
-                                                                                        cb,
-                                                                                        null);
+        int res = installation_service_install_application_from_archive_with_callback(service,
+                                                                                      ipa.getAbsolutePath(),
+                                                                                      cb,
+                                                                                      null);
         return new Integer(res);
       }
     });

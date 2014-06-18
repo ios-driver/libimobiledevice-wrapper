@@ -47,8 +47,6 @@ public class SysLogService {
 
   /**
    * add an additional listener to syslog. Start the service on the first listener.
-   * @param listener
-   * @throws SDKException
    */
   public void addListener(SysLogListener listener) throws SDKException {
 
@@ -70,7 +68,7 @@ public class SysLogService {
   }
 
   public void remove(SysLogListener listener) {
-   handlers.remove(listener);
+    handlers.remove(listener);
 
   }
 

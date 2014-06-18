@@ -16,10 +16,17 @@ package org.libimobiledevice.ios.driver.binding.services;
 
 import com.sun.jna.ptr.PointerByReference;
 
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
+import org.libimobiledevice.ios.driver.binding.raw.JNAInit;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.IntBuffer;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static org.libimobiledevice.ios.driver.binding.exceptions.SDKErrorCode.throwIfNeeded;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.debug_service_free;
@@ -29,9 +36,16 @@ import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrar
 
 public class DebugService {
 
+  private final Lock lock = new ReentrantLock();
+  private final Condition c = lock.newCondition();
   private final sdk_idevice_debug_service_t service;
+  private final String udid;
+  private Process safari;
+  private final IOSDevice device;
 
   public DebugService(IOSDevice d) throws SDKException {
+    udid = d.getUUID();
+    device = d;
     PointerByReference ptr = new PointerByReference();
     throwIfNeeded(debug_service_new(d.getSDKHandle(), ptr));
     service = new sdk_idevice_debug_service_t(ptr.getValue());
@@ -51,6 +65,53 @@ public class DebugService {
     int pid = pidptr.get(0);
     return pid;
   }
+
+
+  public void startSafari() throws IOException, SDKException {
+    File exe = new File(JNAInit.getTemporaryJNAFolder(), "idevicedebug");
+
+    String
+        cmd =
+        exe.getAbsolutePath() + " --udid " + udid + " run com.apple.mobilesafari  -u about:blank";
+    String[] args = cmd.split(" ");
+    ProcessBuilder builder = new ProcessBuilder(args);
+    Map<String, String> env = builder.environment();
+    env.put("LD_LIBRARY_PATH", JNAInit.getTemporaryJNAFolder().getAbsolutePath());
+    builder.directory(JNAInit.getTemporaryJNAFolder());
+    safari = builder.start();
+
+    device.getSysLogService().addListener(new SysLogListener() {
+      @Override
+      public void onLog(SysLogLine line) {
+        if (line != null && line.getMessage().contains("Start debugging com.apple.mobilesafari ")) {
+          try {
+            lock.lock();
+            c.signal();
+          } finally {
+            lock.unlock();
+          }
+        }
+      }
+    });
+
+    try {
+      lock.lock();
+      c.await(5, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+      throw new SDKException("Cannot start safari");
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  public void stopSafari() {
+    if (safari == null) {
+      return;
+    }
+    safari.destroy();
+  }
+
+
 }
 
 

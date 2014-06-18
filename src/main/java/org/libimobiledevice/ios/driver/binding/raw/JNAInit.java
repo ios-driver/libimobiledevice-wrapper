@@ -14,6 +14,7 @@
 
 package org.libimobiledevice.ios.driver.binding.raw;
 
+import com.sun.jna.NativeLibrary;
 import com.sun.jna.Platform;
 
 import org.apache.commons.io.IOUtils;
@@ -28,6 +29,7 @@ import java.util.List;
 public class JNAInit {
 
   private static boolean initialize = false;
+  private static File output;
 
   public static synchronized boolean init() {
     if (initialize) {
@@ -39,10 +41,11 @@ public class JNAInit {
     // @loader_path/libcrypto.1.0.0.dylib syntax. Creating this helper class to have everything in
     // one place, jna.tmpdir
     String home = System.getProperty("user.home");
-    File jna = new File(home, "/.ios-driver/jna");
+    File jna = new File(home, "/.ios-driver/jna/darwin");
     jna.mkdirs();
+    output =jna;
 
-    System.setProperty("jna.library.path", jna.getAbsolutePath());
+//    System.setProperty("jna.library.path", jna.getAbsolutePath());
 //    System.out.println("jna.library.path=" + System.getProperty("jna.library.path"));
 
     // extract everything in it
@@ -52,6 +55,7 @@ public class JNAInit {
       libs.add("iconv.2");
       libs.add("ssl.1.0.0");
       libs.add("z.1");
+      libs.add("lzma.5");
     }
 
     if (Platform.isLinux() || Platform.isWindows()) {
@@ -59,19 +63,29 @@ public class JNAInit {
       libs.add("ssl");
     }
 
-    libs.add("imobiledevice");
+    libs.add("imobiledevice.4");
     libs.add("imobiledevice-sdk");
-    libs.add("plist");
-    libs.add("usbmuxd");
-    libs.add("xml2");
-    libs.add("zip");
+    libs.add("plist.2");
+    libs.add("usbmuxd.2");
+    libs.add("xml2.2");
+    //libs.add("zip");
 
     for (String lib : libs) {
       unpack(lib, jna);
     }
+    NativeLibrary.addSearchPath("imobiledevice-sdk", jna.getAbsolutePath());
 
+    File dst = new File(jna, "idevicedebug");
+    copy("darwin/idevicedebug", dst);
+    dst.setExecutable(true);
+
+    ImobiledeviceSdkLibrary.sdk_idevice_event_unsubscribe();
     initialize = true;
     return true;
+  }
+
+  public static File getTemporaryJNAFolder(){
+    return output;
   }
 
 
@@ -83,35 +97,42 @@ public class JNAInit {
       resource = "darwin/" + libName;
     } else if (Platform.isWindows()) {
       libName = "lib" + lib + ".dll";
-      if (Platform.is64Bit()){
+      if (Platform.is64Bit()) {
         resource = "win32-x86-64/" + libName;
-      }else {
+      } else {
         resource = "win32-x86/" + libName;
       }
     } else if (Platform.isLinux()) {
       libName = "lib" + lib + ".so";
-      if (Platform.is64Bit()){
+      if (Platform.is64Bit()) {
         resource = "linux-x86-64/" + libName;
-      }else {
+      } else {
         resource = "linux-x86/" + libName;
       }
     } else {
       throw new RuntimeException("Unknown platform");
     }
+
+    File dst = new File(out, libName);
+    copy(resource, dst);
+
+
+  }
+
+
+  private static void copy(String resource, File dst) {
     InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
     if (in == null) {
-      System.err.println("Cannot load " + lib);
+      System.err.println("Cannot load " + resource);
     }
 
-    File o = new File(out, libName);
     try {
-      FileOutputStream w = new FileOutputStream(o);
+      FileOutputStream w = new FileOutputStream(dst);
       IOUtils.copy(in, w);
       IOUtils.closeQuietly(w);
       IOUtils.closeQuietly(in);
     } catch (IOException e) {
       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
     }
-
   }
 }

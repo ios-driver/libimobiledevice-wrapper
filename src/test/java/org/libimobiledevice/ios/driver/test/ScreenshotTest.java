@@ -15,7 +15,6 @@
 package org.libimobiledevice.ios.driver.test;
 
 import org.apache.commons.io.IOUtils;
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
 import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
@@ -34,13 +33,13 @@ import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
 public class ScreenshotTest {
 
   @Test(expectedExceptions = SDKException.class)
-  public void notDevDetected() throws LibImobileException, SDKException, IOException {
+  public void notDevDetected() throws SDKException, IOException {
     IOSDevice d = DeviceService.get(main);
     ScreenshotService service = new ScreenshotService(d);
   }
 
-  @Test(groups = "smoke", invocationCount = 10,description = "bla")
-  public void screenshot() throws LibImobileException, SDKException, IOException {
+  @Test(groups = "smoke", invocationCount = 10)
+  public void screenshot() throws SDKException, IOException {
     IOSDevice d = DeviceService.get(main);
     ScreenshotService service = new ScreenshotService(d);
     byte[] bytes = service.takeScreenshot();

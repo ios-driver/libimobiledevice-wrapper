@@ -16,17 +16,14 @@ package org.libimobiledevice.ios.driver.binding.services;
 
 import com.sun.jna.ptr.PointerByReference;
 
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
-import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary.*;
 import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary;
 
 import java.util.logging.Logger;
 
-import static org.libimobiledevice.ios.driver.binding.exceptions.ErrorCode.throwIfNeeded;
-import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary.idevice_new;
+import static org.libimobiledevice.ios.driver.binding.exceptions.SDKErrorCode.throwIfNeeded;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_free;
-import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_new_from_idevice;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_new;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_t;
 
 
@@ -34,32 +31,23 @@ public class IOSDevice {
 
   private static final Logger log = Logger.getLogger(IOSDevice.class.getName());
   private final String uuid;
-  private final idevice_t  handle;
   private final sdk_idevice_t sdk_handle;
   private SysLogService sysLogService;
 
 
-  IOSDevice(String uuid) throws LibImobileException, SDKException {
+  IOSDevice(String uuid) throws SDKException {
     if (uuid == null) {
       throw new IllegalArgumentException("uuid cannot be null");
     }
     this.uuid = uuid;
-
     PointerByReference ptr = new PointerByReference();
-    throwIfNeeded(idevice_new(ptr, uuid));
-    handle = new idevice_t(ptr.getValue());
-
-    PointerByReference sdk = new PointerByReference();
-    sdk_idevice_new_from_idevice(sdk, handle.getPointer());
-    sdk_handle = new ImobiledeviceSdkLibrary.sdk_idevice_t(sdk.getValue());
+    throwIfNeeded(sdk_idevice_new(ptr, uuid));
+    sdk_handle = new ImobiledeviceSdkLibrary.sdk_idevice_t(ptr.getValue());
 
   }
 
-  idevice_t getHandle(){
-    return handle;
-  }
 
-  sdk_idevice_t getSDKHandle(){
+  sdk_idevice_t getSDKHandle() {
     return sdk_handle;
   }
 
@@ -74,7 +62,7 @@ public class IOSDevice {
   }
 
   public SysLogService getSysLogService() throws SDKException {
-    if (sysLogService == null){
+    if (sysLogService == null) {
       sysLogService = new SysLogService(this);
     }
     return sysLogService;

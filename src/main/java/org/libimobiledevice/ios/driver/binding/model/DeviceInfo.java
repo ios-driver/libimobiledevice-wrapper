@@ -22,7 +22,6 @@ import com.dd.plist.NSNumber;
 import com.dd.plist.NSObject;
 import com.dd.plist.NSString;
 
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
 import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
@@ -68,7 +67,7 @@ public class DeviceInfo {
   // array of int
   private String SupportedDeviceFamilies;
 
-  public DeviceInfo(String uuid) throws LibImobileException, SDKException {
+  public DeviceInfo(String uuid) throws SDKException {
     device = DeviceService.get(uuid);
     InformationService service = new InformationService(device);
     String res = service.getValueAsXML(null, null);
@@ -213,8 +212,8 @@ public class DeviceInfo {
      * Initialize the document builder factory so that it can be reuused and does not need to be
      * reinitialized for each new parsing.
      *
-     * @throws javax.xml.parsers.ParserConfigurationException
-     *          If the parser configuration is not supported on your system.
+     * @throws javax.xml.parsers.ParserConfigurationException If the parser configuration is not
+     *                                                        supported on your system.
      */
     private static synchronized void initDocBuilderFactory() throws ParserConfigurationException {
       docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -253,7 +252,7 @@ public class DeviceInfo {
      *
      * @param f The XML property list file.
      * @return The root object of the property list. This is usally a NSDictionary but can also be a
-     *         NSArray.
+     * NSArray.
      * @throws Exception When an error occurs during parsing.
      * @see javax.xml.parsers.DocumentBuilder#parse(java.io.File)
      */
@@ -270,7 +269,7 @@ public class DeviceInfo {
      *
      * @param bytes The byte array containing the property list's data.
      * @return The root object of the property list. This is usally a NSDictionary but can also be a
-     *         NSArray.
+     * NSArray.
      * @throws Exception When an error occurs during parsing.
      */
     public static NSObject parse(final byte[] bytes) throws Exception {
@@ -283,7 +282,7 @@ public class DeviceInfo {
      *
      * @param is The input stream pointing to the property list's data.
      * @return The root object of the property list. This is usally a NSDictionary but can also be a
-     *         NSArray.
+     * NSArray.
      * @throws Exception When an error occurs during parsing.
      * @see javax.xml.parsers.DocumentBuilder#parse(java.io.InputStream)
      */

@@ -55,7 +55,7 @@ public class SysLogLine {
       // and trim leading space
       message = rest.trim();
     } catch (Exception e) {
-      throw new LogParsingException("Cannot parse line (is it a full line ?)"+original);
+      throw new LogParsingException("Cannot parse line (is it a full line ?)" + original);
     }
   }
 

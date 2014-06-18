@@ -36,6 +36,7 @@ import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrar
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.information_service_set_device_name;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.information_service_set_language;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.information_service_set_locale;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.information_service_set_value_from_string;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_information_service_t;
 
 public class InformationService {
@@ -87,23 +88,36 @@ public class InformationService {
     if (language.equals(current)) {
       return;
     }
-    Date now = getDate();
-    IsRestartedListener listener = new IsRestartedListener(now);
-
-    device.getSysLogService().addListener(listener);
+//    Date now = getDate();
+//    IsRestartedListener listener = new IsRestartedListener(now);
+//
+//    device.getSysLogService().addListener(listener);
     throwIfNeeded(information_service_set_language(sdk_idevice_information_service_t, language));
 
-    long deadline = System.currentTimeMillis() + 20000;
-    while (!listener.isDone()) {
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        //ignore.
-      }
+//    long deadline = System.currentTimeMillis() + 20000;
+//    while (!listener.isDone()) {
+//      try {
+//        Thread.sleep(500);
+//      } catch (InterruptedException e) {
+//        ignore.
+//      }
+//
+//      if (System.currentTimeMillis() > deadline) {
+//        System.out.println("didn't find a clue in " + listener.toString());
+//      }
+//    }
+  }
 
-      if (System.currentTimeMillis() > deadline) {
-        System.out.println("didn't find a clue in " + listener.toString());
-      }
+  public boolean isPasswordProtected() throws SDKException {
+    PointerByReference ptr = new PointerByReference();
+    throwIfNeeded(information_service_get_value_as_xml(sdk_idevice_information_service_t, null,
+                                                       "PasswordProtected", ptr));
+    String raw = getValue(ptr);
+    try {
+      NSNumber n = (NSNumber) XMLPropertyListParser.parse(raw.getBytes("UTF-8"));
+      return n.boolValue();
+    } catch (Exception e) {
+      throw new SDKException("Cannot parse returned xml " + raw);
     }
   }
 
@@ -122,6 +136,13 @@ public class InformationService {
     throwIfNeeded(information_service_get_product_version(sdk_idevice_information_service_t, ptr));
     return getValue(ptr);
   }
+
+  public void setValue(String domain, String key, String value) throws SDKException {
+    throwIfNeeded(
+        information_service_set_value_from_string(sdk_idevice_information_service_t, domain, key,
+                                                  value));
+  }
+
 
   public String getValueAsXML(String domain, String key) throws SDKException {
     PointerByReference ptr = new PointerByReference();

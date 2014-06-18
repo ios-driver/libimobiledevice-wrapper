@@ -14,7 +14,6 @@
 
 package org.libimobiledevice.ios.driver.test;
 
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
 import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
@@ -26,7 +25,7 @@ import org.testng.annotations.Test;
 public class SysLogListenersTest {
 
   @Test
-  public void smoke() throws LibImobileException, SDKException, InterruptedException {
+  public void smoke() throws SDKException, InterruptedException {
     IOSDevice d = DeviceService.get(ConnectedDevices.main);
     SysLogService log = d.getSysLogService();
 

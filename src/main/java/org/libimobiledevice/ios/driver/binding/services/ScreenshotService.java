@@ -19,7 +19,7 @@ import com.sun.jna.ptr.PointerByReference;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary;
 
-import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 
 import static org.libimobiledevice.ios.driver.binding.exceptions.SDKErrorCode.throwIfNeeded;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.screenshot_service_free;
@@ -52,7 +52,7 @@ public class ScreenshotService {
   public byte[] takeScreenshot() throws SDKException {
 
     PointerByReference ptr = new PointerByReference();
-    IntBuffer sizeptr = IntBuffer.allocate(1);
+    LongBuffer sizeptr = LongBuffer.allocate(1);
 
     int res = screenshot_service_take_screenshot(service, ptr, sizeptr);
 
@@ -61,8 +61,8 @@ public class ScreenshotService {
     } else if (ptr.getValue() == null) {
       throw new SDKException("Didn't get a value back. Something wrong in screenshot_service");
     } else {
-      int size = sizeptr.get(0);
-      byte[] b = ptr.getValue().getByteArray(0, size);
+      long size = sizeptr.get(0);
+      byte[] b = ptr.getValue().getByteArray(0, (int) size);
       return b;
     }
   }

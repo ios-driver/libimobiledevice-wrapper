@@ -16,22 +16,21 @@ package org.libimobiledevice.ios.driver.binding.services;
 
 import com.sun.jna.ptr.PointerByReference;
 
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
-import org.libimobiledevice.ios.driver.binding.raw.PlistLibrary;
+import org.libimobiledevice.ios.driver.binding.exceptions.SDKErrorCode;
+import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 
-import java.nio.IntBuffer;
+import static org.libimobiledevice.ios.driver.binding.exceptions.SDKErrorCode.throwIfNeeded;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_webinspector_service_t;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.webinspector_service_free;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.webinspector_service_new;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.webinspector_service_receive_message_with_timeout;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.webinspector_service_send_message;
 
-import static org.libimobiledevice.ios.driver.binding.exceptions.ErrorCode.throwIfNeeded;
-import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary.webinspector_client_free;
-import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary.webinspector_client_start_service;
-import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary.webinspector_client_t;
-import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary.webinspector_receive_with_timeout;
-import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary.webinspector_send;
 
 public class WebInspectorService {
 
   private final IOSDevice device;
-  private webinspector_client_t webinspector_client;
+  private sdk_idevice_webinspector_service_t service;
   private volatile boolean listening;
   private volatile boolean stopping;
   private final Object listeningLock = new Object();
@@ -41,16 +40,15 @@ public class WebInspectorService {
     this.device = device;
   }
 
-  public void startWebInspector() throws LibImobileException {
+  public void startWebInspector() throws SDKException {
     PointerByReference ptr = new PointerByReference();
-    throwIfNeeded(
-        webinspector_client_start_service(device.getHandle(), ptr, "libimobile-java"));
-    webinspector_client = new webinspector_client_t(ptr.getValue());
+    SDKErrorCode.throwIfNeeded(webinspector_service_new(device.getSDKHandle(), ptr));
+    service = new sdk_idevice_webinspector_service_t(ptr.getValue());
     stopping = false;
     listening = false;
   }
 
-  public String receiveMessage() throws LibImobileException {
+  public String receiveMessage() throws SDKException {
 
     synchronized (stoppingLock) {
       if (stopping) {
@@ -61,29 +59,21 @@ public class WebInspectorService {
       listening = true;
       try {
         listening = true;
-        PointerByReference plist = new PointerByReference();
-        webinspector_receive_with_timeout(webinspector_client, plist, 5000);
-        PointerByReference plist_xml = new PointerByReference();
-        IntBuffer buff = IntBuffer.allocate(1);
-        PlistLibrary.plist_to_xml(plist.getValue(), plist_xml, buff);
-        if (plist_xml != null && plist_xml.getValue() != null) {
-          return plist_xml.getValue().getString(0);
-        } else {
-          return null;
-        }
+        PointerByReference xml = new PointerByReference();
+        webinspector_service_receive_message_with_timeout(service, xml, 5000);
+        return (xml == null || xml.getValue() == null) ? null : xml.getValue().getString(0);
       } finally {
         listening = false;
       }
     }
+
   }
 
-  public void sendMessage(String xml) throws LibImobileException {
-    PointerByReference ptr = new PointerByReference();
-    PlistLibrary.plist_from_xml(xml, xml.length(), ptr);
-    throwIfNeeded(webinspector_send(webinspector_client, ptr.getValue()));
+  public void sendMessage(String xml) throws SDKException {
+    throwIfNeeded(webinspector_service_send_message(service, xml));
   }
 
-  public void stopWebInspector() throws LibImobileException {
+  public void stopWebInspector() throws SDKException {
     synchronized (stoppingLock) {
       stopping = true;
     }
@@ -97,7 +87,9 @@ public class WebInspectorService {
       }
     }
 
-    throwIfNeeded(webinspector_client_free(webinspector_client));
+    if (service != null) {
+      throwIfNeeded(webinspector_service_free(service));
+    }
   }
 }
 

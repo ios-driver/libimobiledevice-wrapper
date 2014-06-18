@@ -14,22 +14,21 @@
 
 package org.libimobiledevice.ios.driver.binding.services;
 
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.libimobiledevice.ios.driver.binding.exceptions.ErrorCode.throwIfNeeded;
-import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary.idevice_event_subscribe;
-import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceLibrary.idevice_event_unsubscribe;
+import static org.libimobiledevice.ios.driver.binding.exceptions.SDKErrorCode.throwIfNeeded;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_event_subscribe;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_event_unsubscribe;
 
 public class DeviceService {
 
   public static final DeviceService INSTANCE = new DeviceService();
   private final Map<String, IOSDevice> devices = new HashMap<String, IOSDevice>();
 
-  public synchronized static IOSDevice get(String uuid) throws SDKException, LibImobileException {
+  public synchronized static IOSDevice get(String uuid) throws SDKException {
     if (uuid == null) {
       throw new IllegalArgumentException("device id cannot be null.");
     }
@@ -41,7 +40,7 @@ public class DeviceService {
     return res;
   }
 
-  public static void free() throws LibImobileException, SDKException {
+  public static void free() throws SDKException {
     for (String uuid : INSTANCE.devices.keySet()) {
       IOSDevice device = INSTANCE.get(uuid);
       device.free();
@@ -53,7 +52,7 @@ public class DeviceService {
     DeviceService.INSTANCE.devices.remove(uuid);
   }
 
-  public void startDetection(DeviceCallBack cb) throws LibImobileException {
+  public void startDetection(DeviceCallBack cb) throws SDKException {
     if (cb == null) {
       cb = new DeviceCallBack() {
         @Override
@@ -67,11 +66,11 @@ public class DeviceService {
         }
       };
     }
-    throwIfNeeded(idevice_event_subscribe(cb, null));
+    throwIfNeeded(sdk_idevice_event_subscribe(cb, null));
   }
 
-  public void stopDetection() throws LibImobileException {
-    throwIfNeeded(idevice_event_unsubscribe());
+  public void stopDetection() throws SDKException {
+    throwIfNeeded(sdk_idevice_event_unsubscribe());
   }
 }
 

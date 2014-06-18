@@ -1,8 +1,7 @@
 package org.libimobiledevice.ios.driver.test;
 
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
-import org.libimobiledevice.ios.driver.binding.model.ApplicationInfo;
+import org.libimobiledevice.ios.driver.binding.raw.JNAInit;
 import org.libimobiledevice.ios.driver.binding.services.DebugService;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
 import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
@@ -11,6 +10,7 @@ import org.libimobiledevice.ios.driver.binding.services.InstallerService;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
 
@@ -18,7 +18,7 @@ public class DebugTest {
 
 
   @Test(groups = "smoke")
-  public void deviceCanDebugLaunch() throws InterruptedException, LibImobileException,
+  public void deviceCanDebugLaunch() throws InterruptedException,
                                             SDKException {
 
     DebugService service = new DebugService(DeviceService.get(main));
@@ -29,7 +29,7 @@ public class DebugTest {
   }
 
   @Test(groups = "smoke")
-  public void openURL() throws InterruptedException, LibImobileException,
+  public void openURL() throws InterruptedException,
                                SDKException {
 
     IOSDevice d = DeviceService.get(main);
@@ -51,4 +51,16 @@ public class DebugTest {
     System.out.println("pid = " + pid);
     service.free();
   }
+
+  @Test(groups = "smoke")
+  public void startSafari() throws SDKException, IOException, InterruptedException {
+    JNAInit.init();
+    DebugService service = new DebugService(DeviceService.get(main));
+    service.startSafari();
+
+    System.out.println("done");
+    service.stopSafari();
+
+  }
+
 }

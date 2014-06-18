@@ -1,22 +1,9 @@
-/*
- * Copyright 2012-2013 eBay Software Foundation and ios-driver committers
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
-
 package org.libimobiledevice.ios.driver.binding.raw;
 import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
@@ -24,6 +11,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import java.util.Arrays;
 import java.util.List;
 /**
@@ -33,13 +21,40 @@ import java.util.List;
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
 public class ImobiledeviceSdkLibrary implements Library {
-        private static final boolean initialized = JNAInit.init();
 	public static final String JNA_LIBRARY_NAME = "imobiledevice-sdk";
 	public static final NativeLibrary JNA_NATIVE_LIB = NativeLibrary.getInstance(ImobiledeviceSdkLibrary.JNA_LIBRARY_NAME);
 	static {
-
 		Native.register(ImobiledeviceSdkLibrary.class, ImobiledeviceSdkLibrary.JNA_NATIVE_LIB);
 	}
+	/** enum values */
+	public static interface sdk_idevice_error_t {
+		public static final int SDK_E_SUCCESS = 0;
+		public static final int SDK_E_ILLEGAL_ARGUMENT = -1;
+		public static final int SDK_E_OUT_OF_MEMORY = -2;
+		public static final int SDK_E_DEVICE_CONNECT_FAILED = -3;
+		public static final int SDK_E_SERVICE_START_FAILED = -4;
+		public static final int SDK_E_SERVICE_CONNECT_FAILED = -5;
+		public static final int SDK_E_CONNECTION_TIMEOUT = -6;
+		public static final int SDK_E_SEND_FAILED = -7;
+		public static final int SDK_E_RECEIVE_FAILED = -8;
+		public static final int SDK_E_LOCKDOWN_CONNECT_FAILED = -9;
+		public static final int SDK_E_HANDSHAKE_FAILED = -10;
+		public static final int SDK_E_PASSWORD_PROTECTED = -11;
+		public static final int SDK_E_PAIRING_DIALOG_PENDING = -12;
+		public static final int SDK_E_USER_DENIED_PAIRING = -13;
+		public static final int SDK_E_EVENT_SUBSCRIBE_FAILED = -14;
+		public static final int SDK_E_EVENT_UNSUBSCRIBE_FAILED = -15;
+		public static final int SDK_E_APP_LAUNCH_FAILED = -16;
+		public static final int SDK_E_DISK_IMAGE_MOUNT_FAILED = -17;
+		public static final int SDK_E_FILE_OPEN_FAILED = -18;
+		public static final int SDK_E_GET_VALUE_FAILED = -19;
+		public static final int SDK_E_SET_VALUE_FAILED = -20;
+		public static final int SDK_E_RESTART_FAILED = -21;
+		public static final int SDK_E_SHUTDOWN_FAILED = -22;
+		public static final int SDK_E_UNKNOWN_ERROR = -256;
+		public static final int SDK_FORCE_SIGNED_TYPE = -1;
+	};
+	/** enum values */
 	public static interface sdk_idevice_app_type_t {
 		public static final int IDEVICE_APP_TYPE_USER = 1;
 		public static final int IDEVICE_APP_TYPE_SYSTEM = 2;
@@ -47,158 +62,327 @@ public class ImobiledeviceSdkLibrary implements Library {
 		public static final int IDEVICE_APP_TYPE_DEFAULT = 1;
 	};
 	public static class sdk_idevice_app_info_t extends Structure {
-		public String bundle_identifier;
-		public String display_name;
-		public String version;
+		/** C type : char* */
+		public Pointer bundle_identifier;
+		/** C type : char* */
+		public Pointer display_name;
+		/** C type : char* */
+		public Pointer version;
 		public sdk_idevice_app_info_t() {
 			super();
 		}
 		protected List<? > getFieldOrder() {
 			return Arrays.asList("bundle_identifier", "display_name", "version");
 		}
-		public sdk_idevice_app_info_t(String bundle_identifier, String display_name, String version) {
+		/**
+		 * @param bundle_identifier C type : char*<br>
+		 * @param display_name C type : char*<br>
+		 * @param version C type : char*
+		 */
+		public sdk_idevice_app_info_t(Pointer bundle_identifier, Pointer display_name, Pointer version) {
 			super();
 			this.bundle_identifier = bundle_identifier;
 			this.display_name = display_name;
 			this.version = version;
 		}
+		public sdk_idevice_app_info_t(Pointer peer) {
+			super(peer);
+		}
 		public static class ByReference extends sdk_idevice_app_info_t implements Structure.ByReference {
-
+			
 		};
 		public static class ByValue extends sdk_idevice_app_info_t implements Structure.ByValue {
-
+			
 		};
 	};
+	public static class sdk_idevice_provisioning_profile_info_t extends Structure {
+		/** C type : char* */
+		public Pointer uuid;
+		/** C type : char* */
+		public Pointer name;
+		/** C type : char* */
+		public Pointer app_id_name;
+		/** C type : time_t */
+		public NativeLong creation_date;
+		/** C type : time_t */
+		public NativeLong expiration_date;
+		/** C type : char* */
+		public Pointer application_identifier_prefix;
+		/** C type : char* */
+		public Pointer team_name;
+		/** C type : char** */
+		public Pointer provisioned_devices;
+		/** C type : char* */
+		public Pointer entitlements;
+		public sdk_idevice_provisioning_profile_info_t() {
+			super();
+		}
+		protected List<? > getFieldOrder() {
+			return Arrays.asList("uuid", "name", "app_id_name", "creation_date", "expiration_date", "application_identifier_prefix", "team_name", "provisioned_devices", "entitlements");
+		}
+		/**
+		 * @param uuid C type : char*<br>
+		 * @param name C type : char*<br>
+		 * @param app_id_name C type : char*<br>
+		 * @param creation_date C type : time_t<br>
+		 * @param expiration_date C type : time_t<br>
+		 * @param application_identifier_prefix C type : char*<br>
+		 * @param team_name C type : char*<br>
+		 * @param provisioned_devices C type : char**<br>
+		 * @param entitlements C type : char*
+		 */
+		public sdk_idevice_provisioning_profile_info_t(Pointer uuid, Pointer name, Pointer app_id_name, NativeLong creation_date, NativeLong expiration_date, Pointer application_identifier_prefix, Pointer team_name, Pointer provisioned_devices, Pointer entitlements) {
+			super();
+			this.uuid = uuid;
+			this.name = name;
+			this.app_id_name = app_id_name;
+			this.creation_date = creation_date;
+			this.expiration_date = expiration_date;
+			this.application_identifier_prefix = application_identifier_prefix;
+			this.team_name = team_name;
+			this.provisioned_devices = provisioned_devices;
+			this.entitlements = entitlements;
+		}
+		public sdk_idevice_provisioning_profile_info_t(Pointer peer) {
+			super(peer);
+		}
+		public static class ByReference extends sdk_idevice_provisioning_profile_info_t implements Structure.ByReference {
+			
+		};
+		public static class ByValue extends sdk_idevice_provisioning_profile_info_t implements Structure.ByValue {
+			
+		};
+	};
+	public interface sdk_idevice_event_cb_t extends Callback {
+		void apply(String event_name, String udid, Pointer user_data);
+	};
 	public interface sdk_idevice_installation_service_status_cb_t extends Callback {
-		void apply(Pointer operation, Pointer message, int precent_complete, Pointer user_data);
+		void apply(String operation, String message, int precent_complete, Pointer user_data);
 	};
 	public interface sdk_idevice_syslog_service_read_cb_t extends Callback {
 		void apply(byte c, Pointer user_data);
 	};
-	@Deprecated
-	public static native void sdk_idevice_free_string(Pointer s);
+	/** Original signature : <code>void sdk_idevice_free_string(char*)</code> */
 	public static native void sdk_idevice_free_string(ByteBuffer s);
+	/** Original signature : <code>void sdk_idevice_set_debug_level(int)</code> */
 	public static native void sdk_idevice_set_debug_level(int level);
-	@Deprecated
-	public static native short sdk_idevice_new_from_idevice(Pointer sdk_device, Pointer idevice);
-	public static native short sdk_idevice_new_from_idevice(PointerByReference sdk_device, Pointer idevice);
-	@Deprecated
-	public static native short sdk_idevice_new(Pointer sdk_device, Pointer udid);
-	public static native short sdk_idevice_new(PointerByReference sdk_device, String udid);
-	public static native short sdk_idevice_new(PointerByReference sdk_device, Pointer udid);
-	@Deprecated
-	public static native short sdk_idevice_free(Pointer sdk_device);
-	public static native short sdk_idevice_free(ImobiledeviceSdkLibrary.sdk_idevice_t sdk_device);
-	@Deprecated
-	public static native Pointer sdk_idevice_get_idevice(Pointer sdk_device);
+	/**
+	 * sdk_device structure creation and destruction<br>
+	 * Original signature : <code>sdk_idevice_error_t sdk_idevice_new_from_idevice(sdk_idevice_t*, void*)</code>
+	 */
+	public static native int sdk_idevice_new_from_idevice(PointerByReference sdk_device, Pointer idevice);
+	/** Original signature : <code>sdk_idevice_error_t sdk_idevice_new(sdk_idevice_t*, const char*)</code> */
+	public static native int sdk_idevice_new(PointerByReference sdk_device, String udid);
+	/** Original signature : <code>sdk_idevice_error_t sdk_idevice_new(sdk_idevice_t*, const char*)</code> */
+	public static native int sdk_idevice_new(PointerByReference sdk_device, Pointer udid);
+	/** Original signature : <code>sdk_idevice_error_t sdk_idevice_free(sdk_idevice_t)</code> */
+	public static native int sdk_idevice_free(ImobiledeviceSdkLibrary.sdk_idevice_t sdk_device);
+	/** Original signature : <code>sdk_idevice_error_t sdk_idevice_restart(sdk_idevice_t)</code> */
+	public static native int sdk_idevice_restart(ImobiledeviceSdkLibrary.sdk_idevice_t sdk_device);
+	/** Original signature : <code>sdk_idevice_error_t sdk_idevice_shutdown(sdk_idevice_t)</code> */
+	public static native int sdk_idevice_shutdown(ImobiledeviceSdkLibrary.sdk_idevice_t sdk_device);
+	/** Original signature : <code>void* sdk_idevice_get_idevice(sdk_idevice_t)</code> */
 	public static native Pointer sdk_idevice_get_idevice(ImobiledeviceSdkLibrary.sdk_idevice_t sdk_device);
-	@Deprecated
-	public static native short information_service_new(Pointer device, Pointer service);
-	public static native short information_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
-	public static native short information_service_new(Pointer device, PointerByReference service);
-	@Deprecated
-	public static native short information_service_free(Pointer service);
-	public static native short information_service_free(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service);
-	@Deprecated
-	public static native short information_service_get_device_name(Pointer service, PointerByReference device_name);
-	public static native short information_service_get_device_name(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference device_name);
-	@Deprecated
-	public static native short information_service_set_device_name(Pointer service, Pointer device_name);
-	public static native short information_service_set_device_name(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, String device_name);
-	@Deprecated
-	public static native short information_service_get_device_type(Pointer service, PointerByReference device_type);
-	public static native short information_service_get_device_type(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference device_type);
-	@Deprecated
-	public static native short information_service_get_product_version(Pointer service, PointerByReference product_version);
-	public static native short information_service_get_product_version(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference product_version);
-	@Deprecated
-	public static native short information_service_get_language(Pointer service, PointerByReference language_code);
-	public static native short information_service_get_language(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference language_code);
-	@Deprecated
-	public static native short information_service_set_language(Pointer service, Pointer language_code);
-	public static native short information_service_set_language(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, String language_code);
-	@Deprecated
-	public static native short information_service_get_locale(Pointer service, PointerByReference locale_code);
-	public static native short information_service_get_locale(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference locale_code);
-	@Deprecated
-	public static native short information_service_set_locale(Pointer service, Pointer locale_code);
-	public static native short information_service_set_locale(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, String locale_code);
-	@Deprecated
-	public static native short information_service_get_value_as_xml(Pointer service, Pointer domain, Pointer key, PointerByReference xml);
-	public static native short information_service_get_value_as_xml(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, String domain, String key, PointerByReference xml);
-	@Deprecated
-	public static native short information_service_is_developer_mode_enabled(Pointer service, IntByReference enabled);
-	public static native short information_service_is_developer_mode_enabled(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, IntBuffer enabled);
-	@Deprecated
-	public static native short installation_service_new(Pointer device, Pointer service);
-	public static native short installation_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
-	public static native short installation_service_new(Pointer device, PointerByReference service);
-	@Deprecated
-	public static native short installation_service_free(Pointer service);
-	public static native short installation_service_free(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service);
-	@Deprecated
-	public static native short installation_service_install_application_from_archive(Pointer service, Pointer archive_filename);
-	public static native short installation_service_install_application_from_archive(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, String archive_filename);
-	@Deprecated
-	public static native short installation_service_install_application_from_archive_with_callback(Pointer service, Pointer archive_filename, ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t callback, Pointer user_data);
-	public static native short installation_service_install_application_from_archive_with_callback(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, String archive_filename, ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t callback, Pointer user_data);
-	@Deprecated
-	public static native short installation_service_uninstall_application_with_callback(Pointer service, Pointer bundle_identifier, ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t callback, Pointer user_data);
-	public static native short installation_service_uninstall_application_with_callback(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, String bundle_identifier, ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t callback, Pointer user_data);
-	@Deprecated
-	public static native short installation_service_uninstall_application(Pointer service, Pointer bundle_identifier);
-	public static native short installation_service_uninstall_application(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, String bundle_identifier);
-	@Deprecated
-	public static native short installation_service_get_application_list(Pointer service, int type, PointerByReference app_info_list, IntByReference count);
-	public static native short installation_service_get_application_list(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, int type, ImobiledeviceSdkLibrary.sdk_idevice_app_info_t.ByReference app_info_list, IntBuffer count);
-	public static native short installation_service_get_application_list(Pointer service, int type, ImobiledeviceSdkLibrary.sdk_idevice_app_info_t.ByReference app_info_list, IntByReference count);
-	@Deprecated
-	public static native short installation_service_get_application_list_as_xml(Pointer installservice, int type, PointerByReference xml);
-	public static native short installation_service_get_application_list_as_xml(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t installservice, int type, PointerByReference xml);
-	@Deprecated
-	public static native short installation_service_application_list_free(Pointer service, ImobiledeviceSdkLibrary.sdk_idevice_app_info_t app_info_list, int count);
-	public static native short installation_service_application_list_free(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, ImobiledeviceSdkLibrary.sdk_idevice_app_info_t app_info_list, int count);
-	@Deprecated
-	public static native short syslog_service_new(Pointer device, Pointer service);
-	public static native short syslog_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
-	public static native short syslog_service_new(Pointer device, PointerByReference service);
-	@Deprecated
-	public static native short syslog_service_free(Pointer service);
-	public static native short syslog_service_free(ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_t service);
-	@Deprecated
-	public static native short syslog_service_start_capture(Pointer service, ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_read_cb_t callback, Pointer user_data);
-	public static native short syslog_service_start_capture(ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_t service, ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_read_cb_t callback, Pointer user_data);
-	@Deprecated
-	public static native short syslog_service_stop_capture(Pointer service);
-	public static native short syslog_service_stop_capture(ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_t service);
-	@Deprecated
-	public static native short debug_service_new(Pointer device, Pointer service);
-	public static native short debug_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
-	public static native short debug_service_new(Pointer device, PointerByReference service);
-	@Deprecated
-	public static native short debug_service_free(Pointer service);
-	public static native short debug_service_free(ImobiledeviceSdkLibrary.sdk_idevice_debug_service_t service);
-	@Deprecated
-	public static native short debug_service_launch_application_by_bundle_identifier(Pointer service, Pointer bundle_identifier, PointerByReference environment, PointerByReference arguments, IntByReference pid);
-	public static native short debug_service_launch_application_by_bundle_identifier(ImobiledeviceSdkLibrary.sdk_idevice_debug_service_t service, String bundle_identifier, PointerByReference environment, PointerByReference arguments, IntBuffer pid);
-
-
-        public static native short screenshot_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
-        public static native short screenshot_service_free(ImobiledeviceSdkLibrary.sdk_idevice_screenshot_service_t service);
-        public static native short screenshot_service_take_screenshot(ImobiledeviceSdkLibrary.sdk_idevice_screenshot_service_t service,PointerByReference data,IntBuffer size);
-
-
-        @Deprecated
-	public static native short app_container_service_new(Pointer device, Pointer service);
-	public static native short app_container_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
-	public static native short app_container_service_new(Pointer device, PointerByReference service);
-	@Deprecated
-	public static native short app_container_service_free(Pointer service);
-	public static native short app_container_service_free(ImobiledeviceSdkLibrary.sdk_idevice_app_container_service_t service);
-	@Deprecated
-	public static native short app_container_service_empty_application_cache(Pointer service, Pointer bundle_identifier);
-	public static native short app_container_service_empty_application_cache(ImobiledeviceSdkLibrary.sdk_idevice_app_container_service_t service, String bundle_identifier);
-	/** Pointer to unknown (opaque) type */
+	/** Original signature : <code>sdk_idevice_error_t sdk_idevice_event_subscribe(sdk_idevice_event_cb_t, void*)</code> */
+	public static native int sdk_idevice_event_subscribe(ImobiledeviceSdkLibrary.sdk_idevice_event_cb_t callback, Pointer user_data);
+	/** Original signature : <code>sdk_idevice_error_t sdk_idevice_event_unsubscribe()</code> */
+	public static native int sdk_idevice_event_unsubscribe();
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t information_service_new(sdk_idevice_t, sdk_idevice_information_service_t*)</code>
+	 */
+	public static native int information_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t information_service_new(sdk_idevice_t, sdk_idevice_information_service_t*)</code>
+	 */
+	public static native int information_service_new(Pointer device, PointerByReference service);
+	/** Original signature : <code>sdk_idevice_error_t information_service_free(sdk_idevice_information_service_t)</code> */
+	public static native int information_service_free(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service);
+	/** Original signature : <code>sdk_idevice_error_t information_service_get_device_name(sdk_idevice_information_service_t, char**)</code> */
+	public static native int information_service_get_device_name(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference device_name);
+	/** Original signature : <code>sdk_idevice_error_t information_service_set_device_name(sdk_idevice_information_service_t, const char*)</code> */
+	public static native int information_service_set_device_name(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, String device_name);
+	/** Original signature : <code>sdk_idevice_error_t information_service_get_device_type(sdk_idevice_information_service_t, char**)</code> */
+	public static native int information_service_get_device_type(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference device_type);
+	/** Original signature : <code>sdk_idevice_error_t information_service_get_product_version(sdk_idevice_information_service_t, char**)</code> */
+	public static native int information_service_get_product_version(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference product_version);
+	/** Original signature : <code>sdk_idevice_error_t information_service_get_language(sdk_idevice_information_service_t, char**)</code> */
+	public static native int information_service_get_language(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference language_code);
+	/** Original signature : <code>sdk_idevice_error_t information_service_set_language(sdk_idevice_information_service_t, const char*)</code> */
+	public static native int information_service_set_language(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, String language_code);
+	/** Original signature : <code>sdk_idevice_error_t information_service_get_locale(sdk_idevice_information_service_t, char**)</code> */
+	public static native int information_service_get_locale(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, PointerByReference locale_code);
+	/** Original signature : <code>sdk_idevice_error_t information_service_set_locale(sdk_idevice_information_service_t, const char*)</code> */
+	public static native int information_service_set_locale(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, String locale_code);
+	/** Original signature : <code>sdk_idevice_error_t information_service_set_value_from_string(sdk_idevice_information_service_t, const char*, const char*, const char*)</code> */
+	public static native int information_service_set_value_from_string(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, String domain, String key, String value);
+	/** Original signature : <code>sdk_idevice_error_t information_service_get_value_as_xml(sdk_idevice_information_service_t, const char*, const char*, char**)</code> */
+	public static native int information_service_get_value_as_xml(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, String domain, String key, PointerByReference xml);
+	/** Original signature : <code>sdk_idevice_error_t information_service_is_developer_mode_enabled(sdk_idevice_information_service_t, int*)</code> */
+	public static native int information_service_is_developer_mode_enabled(ImobiledeviceSdkLibrary.sdk_idevice_information_service_t service, IntBuffer enabled);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t installation_service_new(sdk_idevice_t, sdk_idevice_installation_service_t*)</code>
+	 */
+	public static native int installation_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t installation_service_new(sdk_idevice_t, sdk_idevice_installation_service_t*)</code>
+	 */
+	public static native int installation_service_new(Pointer device, PointerByReference service);
+	/** Original signature : <code>sdk_idevice_error_t installation_service_free(sdk_idevice_installation_service_t)</code> */
+	public static native int installation_service_free(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service);
+	/** Original signature : <code>sdk_idevice_error_t installation_service_install_application_from_archive(sdk_idevice_installation_service_t, const char*)</code> */
+	public static native int installation_service_install_application_from_archive(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, String archive_filename);
+	/** Original signature : <code>sdk_idevice_error_t installation_service_install_application_from_archive_with_callback(sdk_idevice_installation_service_t, const char*, sdk_idevice_installation_service_status_cb_t, void*)</code> */
+	public static native int installation_service_install_application_from_archive_with_callback(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, String archive_filename, ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t callback, Pointer user_data);
+	/** Original signature : <code>sdk_idevice_error_t installation_service_uninstall_application_with_callback(sdk_idevice_installation_service_t, const char*, sdk_idevice_installation_service_status_cb_t, void*)</code> */
+	public static native int installation_service_uninstall_application_with_callback(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, String bundle_identifier, ImobiledeviceSdkLibrary.sdk_idevice_installation_service_status_cb_t callback, Pointer user_data);
+	/** Original signature : <code>sdk_idevice_error_t installation_service_uninstall_application(sdk_idevice_installation_service_t, const char*)</code> */
+	public static native int installation_service_uninstall_application(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, String bundle_identifier);
+	/** Original signature : <code>sdk_idevice_error_t installation_service_get_application_list(sdk_idevice_installation_service_t, sdk_idevice_app_type_t, sdk_idevice_app_info_t**, uint32_t*)</code> */
+	public static native int installation_service_get_application_list(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, int type, PointerByReference app_info_list, IntBuffer count);
+	/** Original signature : <code>sdk_idevice_error_t installation_service_get_application_list(sdk_idevice_installation_service_t, sdk_idevice_app_type_t, sdk_idevice_app_info_t**, uint32_t*)</code> */
+	public static native int installation_service_get_application_list(Pointer service, int type, PointerByReference app_info_list, IntByReference count);
+	/** Original signature : <code>sdk_idevice_error_t installation_service_get_application_list_as_xml(sdk_idevice_installation_service_t, sdk_idevice_app_type_t, char**)</code> */
+	public static native int installation_service_get_application_list_as_xml(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t installservice, int type, PointerByReference xml);
+	/** Original signature : <code>sdk_idevice_error_t installation_service_application_list_free(sdk_idevice_installation_service_t, sdk_idevice_app_info_t*, uint32_t)</code> */
+	public static native int installation_service_application_list_free(ImobiledeviceSdkLibrary.sdk_idevice_installation_service_t service, ImobiledeviceSdkLibrary.sdk_idevice_app_info_t app_info_list, int count);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t syslog_service_new(sdk_idevice_t, sdk_idevice_syslog_service_t*)</code>
+	 */
+	public static native int syslog_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t syslog_service_new(sdk_idevice_t, sdk_idevice_syslog_service_t*)</code>
+	 */
+	public static native int syslog_service_new(Pointer device, PointerByReference service);
+	/** Original signature : <code>sdk_idevice_error_t syslog_service_free(sdk_idevice_syslog_service_t)</code> */
+	public static native int syslog_service_free(ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_t service);
+	/** Original signature : <code>sdk_idevice_error_t syslog_service_start_capture(sdk_idevice_syslog_service_t, sdk_idevice_syslog_service_read_cb_t, void*)</code> */
+	public static native int syslog_service_start_capture(ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_t service, ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_read_cb_t callback, Pointer user_data);
+	/** Original signature : <code>sdk_idevice_error_t syslog_service_stop_capture(sdk_idevice_syslog_service_t)</code> */
+	public static native int syslog_service_stop_capture(ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_t service);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t debug_service_new(sdk_idevice_t, sdk_idevice_debug_service_t*)</code>
+	 */
+	public static native int debug_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t debug_service_new(sdk_idevice_t, sdk_idevice_debug_service_t*)</code>
+	 */
+	public static native int debug_service_new(Pointer device, PointerByReference service);
+	/** Original signature : <code>sdk_idevice_error_t debug_service_free(sdk_idevice_debug_service_t)</code> */
+	public static native int debug_service_free(ImobiledeviceSdkLibrary.sdk_idevice_debug_service_t service);
+	/** Original signature : <code>sdk_idevice_error_t debug_service_launch_application_by_bundle_identifier(sdk_idevice_debug_service_t, const char*, const char*[], const char*[], int*)</code> */
+	public static native int debug_service_launch_application_by_bundle_identifier(ImobiledeviceSdkLibrary.sdk_idevice_debug_service_t service, String bundle_identifier, PointerByReference environment, PointerByReference arguments, IntBuffer pid);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t app_container_service_new(sdk_idevice_t, sdk_idevice_app_container_service_t*)</code>
+	 */
+	public static native int app_container_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t app_container_service_new(sdk_idevice_t, sdk_idevice_app_container_service_t*)</code>
+	 */
+	public static native int app_container_service_new(Pointer device, PointerByReference service);
+	/** Original signature : <code>sdk_idevice_error_t app_container_service_free(sdk_idevice_app_container_service_t)</code> */
+	public static native int app_container_service_free(ImobiledeviceSdkLibrary.sdk_idevice_app_container_service_t service);
+	/** Original signature : <code>sdk_idevice_error_t app_container_service_empty_application_cache(sdk_idevice_app_container_service_t, const char*)</code> */
+	public static native int app_container_service_empty_application_cache(ImobiledeviceSdkLibrary.sdk_idevice_app_container_service_t service, String bundle_identifier);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t screenshot_service_new(sdk_idevice_t, sdk_idevice_screenshot_service_t*)</code>
+	 */
+	public static native int screenshot_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t screenshot_service_new(sdk_idevice_t, sdk_idevice_screenshot_service_t*)</code>
+	 */
+	public static native int screenshot_service_new(Pointer device, PointerByReference service);
+	/** Original signature : <code>sdk_idevice_error_t screenshot_service_take_screenshot(sdk_idevice_screenshot_service_t, char**, uint64_t*)</code> */
+	public static native int screenshot_service_take_screenshot(ImobiledeviceSdkLibrary.sdk_idevice_screenshot_service_t service, PointerByReference image_data, LongBuffer image_size);
+	/** Original signature : <code>sdk_idevice_error_t screenshot_service_free(sdk_idevice_screenshot_service_t)</code> */
+	public static native int screenshot_service_free(ImobiledeviceSdkLibrary.sdk_idevice_screenshot_service_t service);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t provisioning_profile_service_new(sdk_idevice_t, sdk_idevice_provisioning_profile_service_t*)</code>
+	 */
+	public static native int provisioning_profile_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t provisioning_profile_service_new(sdk_idevice_t, sdk_idevice_provisioning_profile_service_t*)</code>
+	 */
+	public static native int provisioning_profile_service_new(Pointer device, PointerByReference service);
+	/** Original signature : <code>sdk_idevice_error_t provisioning_profile_service_free(sdk_idevice_provisioning_profile_service_t)</code> */
+	public static native int provisioning_profile_service_free(ImobiledeviceSdkLibrary.sdk_idevice_provisioning_profile_service_t service);
+	/** Original signature : <code>sdk_idevice_error_t provisioning_profile_service_install_profile(sdk_idevice_provisioning_profile_service_t, const char*)</code> */
+	public static native int provisioning_profile_service_install_profile(ImobiledeviceSdkLibrary.sdk_idevice_provisioning_profile_service_t service, String profile_filename);
+	/** Original signature : <code>sdk_idevice_error_t provisioning_profile_service_get_profile_list(sdk_idevice_provisioning_profile_service_t, sdk_idevice_provisioning_profile_info_t**, uint32_t*)</code> */
+	public static native int provisioning_profile_service_get_profile_list(ImobiledeviceSdkLibrary.sdk_idevice_provisioning_profile_service_t service, PointerByReference profile_list, IntBuffer count);
+	/** Original signature : <code>sdk_idevice_error_t provisioning_profile_service_get_profile_list(sdk_idevice_provisioning_profile_service_t, sdk_idevice_provisioning_profile_info_t**, uint32_t*)</code> */
+	public static native int provisioning_profile_service_get_profile_list(Pointer service, PointerByReference profile_list, IntByReference count);
+	/** Original signature : <code>sdk_idevice_error_t provisioning_profile_service_remove_profile(sdk_idevice_provisioning_profile_service_t, const char*)</code> */
+	public static native int provisioning_profile_service_remove_profile(ImobiledeviceSdkLibrary.sdk_idevice_provisioning_profile_service_t service, String profile_identifier);
+	/** Original signature : <code>sdk_idevice_error_t provisioning_profile_info_list_free(sdk_idevice_provisioning_profile_info_t*, uint32_t)</code> */
+	public static native int provisioning_profile_info_list_free(ImobiledeviceSdkLibrary.sdk_idevice_provisioning_profile_info_t profile_list, int count);
+	/** Original signature : <code>sdk_idevice_error_t provisioning_profile_info_from_filename(const char*, sdk_idevice_provisioning_profile_info_t*)</code> */
+	public static native int provisioning_profile_info_from_filename(String filename, ImobiledeviceSdkLibrary.sdk_idevice_provisioning_profile_info_t profileinfo);
+	/** Original signature : <code>sdk_idevice_error_t provisioning_profile_info_from_filename_as_xml(const char*, char**)</code> */
+	public static native int provisioning_profile_info_from_filename_as_xml(String filename, PointerByReference xml);
+	/** Original signature : <code>sdk_idevice_error_t provisioning_profile_info_free(sdk_idevice_provisioning_profile_info_t)</code> */
+	public static native int provisioning_profile_info_free(ImobiledeviceSdkLibrary.sdk_idevice_provisioning_profile_info_t.ByValue profileinfo);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t image_mounting_service_new(sdk_idevice_t, sdk_idevice_image_mounting_service_t*)</code>
+	 */
+	public static native int image_mounting_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t image_mounting_service_new(sdk_idevice_t, sdk_idevice_image_mounting_service_t*)</code>
+	 */
+	public static native int image_mounting_service_new(Pointer device, PointerByReference service);
+	/** Original signature : <code>sdk_idevice_error_t image_mounting_service_free(sdk_idevice_image_mounting_service_t)</code> */
+	public static native int image_mounting_service_free(ImobiledeviceSdkLibrary.sdk_idevice_image_mounting_service_t service);
+	/** Original signature : <code>sdk_idevice_error_t image_mounting_service_mount_image(sdk_idevice_image_mounting_service_t, const char*, const char*)</code> */
+	public static native int image_mounting_service_mount_image(ImobiledeviceSdkLibrary.sdk_idevice_image_mounting_service_t service, String image_filename, String image_type);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t webinspector_service_new(sdk_idevice_t, sdk_idevice_webinspector_service_t*)</code>
+	 */
+	public static native int webinspector_service_new(ImobiledeviceSdkLibrary.sdk_idevice_t device, PointerByReference service);
+	/**
+	 * interface<br>
+	 * Original signature : <code>sdk_idevice_error_t webinspector_service_new(sdk_idevice_t, sdk_idevice_webinspector_service_t*)</code>
+	 */
+	public static native int webinspector_service_new(Pointer device, PointerByReference service);
+	/** Original signature : <code>sdk_idevice_error_t webinspector_service_free(sdk_idevice_webinspector_service_t)</code> */
+	public static native int webinspector_service_free(ImobiledeviceSdkLibrary.sdk_idevice_webinspector_service_t service);
+	/** Original signature : <code>sdk_idevice_error_t webinspector_service_send_message(sdk_idevice_webinspector_service_t, const char*)</code> */
+	public static native int webinspector_service_send_message(ImobiledeviceSdkLibrary.sdk_idevice_webinspector_service_t service, String message);
+	/** Original signature : <code>sdk_idevice_error_t webinspector_service_receive_message(sdk_idevice_webinspector_service_t, char**)</code> */
+	public static native int webinspector_service_receive_message(ImobiledeviceSdkLibrary.sdk_idevice_webinspector_service_t service, PointerByReference message);
+	/** Original signature : <code>sdk_idevice_error_t webinspector_service_receive_message_with_timeout(sdk_idevice_webinspector_service_t, char**, uint32_t)</code> */
+	public static native int webinspector_service_receive_message_with_timeout(ImobiledeviceSdkLibrary.sdk_idevice_webinspector_service_t service, PointerByReference message, int timeout_ms);
+	public static class sdk_idevice_provisioning_profile_service_t extends PointerType {
+		public sdk_idevice_provisioning_profile_service_t(Pointer address) {
+			super(address);
+		}
+		public sdk_idevice_provisioning_profile_service_t() {
+			super();
+		}
+	};
+	public static class sdk_idevice_image_mounting_service_t extends PointerType {
+		public sdk_idevice_image_mounting_service_t(Pointer address) {
+			super(address);
+		}
+		public sdk_idevice_image_mounting_service_t() {
+			super();
+		}
+	};
 	public static class sdk_idevice_debug_service_t extends PointerType {
 		public sdk_idevice_debug_service_t(Pointer address) {
 			super(address);
@@ -207,18 +391,6 @@ public class ImobiledeviceSdkLibrary implements Library {
 			super();
 		}
 	};
-
-
-        /** Pointer to unknown (opaque) type */
-        public static class sdk_idevice_screenshot_service_t extends PointerType {
-          public sdk_idevice_screenshot_service_t(Pointer address) {
-            super(address);
-          }
-          public sdk_idevice_screenshot_service_t() {
-            super();
-          }
-        };
-	/** Pointer to unknown (opaque) type */
 	public static class sdk_idevice_t extends PointerType {
 		public sdk_idevice_t(Pointer address) {
 			super(address);
@@ -227,7 +399,6 @@ public class ImobiledeviceSdkLibrary implements Library {
 			super();
 		}
 	};
-	/** Pointer to unknown (opaque) type */
 	public static class sdk_idevice_app_container_service_t extends PointerType {
 		public sdk_idevice_app_container_service_t(Pointer address) {
 			super(address);
@@ -236,7 +407,14 @@ public class ImobiledeviceSdkLibrary implements Library {
 			super();
 		}
 	};
-	/** Pointer to unknown (opaque) type */
+	public static class sdk_idevice_screenshot_service_t extends PointerType {
+		public sdk_idevice_screenshot_service_t(Pointer address) {
+			super(address);
+		}
+		public sdk_idevice_screenshot_service_t() {
+			super();
+		}
+	};
 	public static class sdk_idevice_installation_service_t extends PointerType {
 		public sdk_idevice_installation_service_t(Pointer address) {
 			super(address);
@@ -245,7 +423,6 @@ public class ImobiledeviceSdkLibrary implements Library {
 			super();
 		}
 	};
-	/** Pointer to unknown (opaque) type */
 	public static class sdk_idevice_syslog_service_t extends PointerType {
 		public sdk_idevice_syslog_service_t(Pointer address) {
 			super(address);
@@ -254,12 +431,19 @@ public class ImobiledeviceSdkLibrary implements Library {
 			super();
 		}
 	};
-	/** Pointer to unknown (opaque) type */
 	public static class sdk_idevice_information_service_t extends PointerType {
 		public sdk_idevice_information_service_t(Pointer address) {
 			super(address);
 		}
 		public sdk_idevice_information_service_t() {
+			super();
+		}
+	};
+	public static class sdk_idevice_webinspector_service_t extends PointerType {
+		public sdk_idevice_webinspector_service_t(Pointer address) {
+			super(address);
+		}
+		public sdk_idevice_webinspector_service_t() {
 			super();
 		}
 	};

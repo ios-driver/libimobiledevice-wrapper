@@ -19,11 +19,12 @@ public class ConnectedDevices {
 
   // ipod
   public static String ipodId = "d1ce6333af579e27d166349dc8a1989503ba5b4f";
+  public static String roberto = "c9ea8349787c4e2010fcc384dc3214aecbbb666a";
   // eBay white
   public static String ebayId4 = "71303e6926455ca1fd1c61cace4c8f65dc38732d";
 
   // eBay black
-  public static String ebayId4_b = "25dc0eec2275722f6a9f6c6581175207e0fc4b07";
+  public static String doyle = "25dc0eec2275722f6a9f6c6581175207e0fc4b07";
   // ebay white iphone 5
   public static String ebayId5 = "bf990c76a5788b27b6686a80069d7fd056a09d1c";
 
@@ -40,8 +41,8 @@ public class ConnectedDevices {
   public static String freynaud = "ff4827346ed6b54a98f51e69a261a140ae2bf6b3";
   public static String fviscomi = "44c3bfb9370299ffc063a2b1c6a689c02a2d6c7f";
 
+
   public static String main = ConnectedDevices.freynaud;
   public static String device2 = ConnectedDevices.ipodId;
-  public static String device3 = ConnectedDevices.ebayId4_b;
 
 }

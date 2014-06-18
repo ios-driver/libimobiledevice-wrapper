@@ -1,6 +1,5 @@
 package org.libimobiledevice.ios.driver.test;
 
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
 import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
@@ -18,13 +17,13 @@ public class WebInspectorTest {
 
 
   @BeforeMethod
-  public void setup() throws LibImobileException, SDKException {
+  public void setup() throws SDKException {
     device = DeviceService.get(main);
     service = new WebInspectorService(device);
   }
 
   @Test(groups = "smoke", invocationCount = 5)
-  public void webInspectorClient() throws InterruptedException, LibImobileException, SDKException {
+  public void webInspectorClient() throws InterruptedException, SDKException {
 
     service.startWebInspector();
 

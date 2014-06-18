@@ -21,14 +21,12 @@ import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrar
 public abstract class InstallCallback implements sdk_idevice_installation_service_status_cb_t {
 
   @Override
-  public void apply(Pointer operation, Pointer message, int precent_complete, Pointer user_data) {
-    String op = operation.getString(0);
-    String msg = message.getString(0);
+  public void apply(String operation, String message, int precent_complete, Pointer user_data) {
     int percent = precent_complete;
     if (precent_complete == -1) {
       percent = 100;
     }
-    onUpdate(op, percent, msg);
+    onUpdate(operation, percent, message);
   }
 
   protected abstract void onUpdate(String operation, int percent, String message);

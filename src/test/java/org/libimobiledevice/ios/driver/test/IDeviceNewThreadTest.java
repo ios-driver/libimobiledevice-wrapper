@@ -1,6 +1,5 @@
 package org.libimobiledevice.ios.driver.test;
 
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
 import org.libimobiledevice.ios.driver.binding.services.IOSDevice;
@@ -23,13 +22,13 @@ public class IDeviceNewThreadTest {
   }
 
   @Test(dataProvider = "devices")
-  public void canCreateDevicesInParallel(String uuid) throws LibImobileException, SDKException {
+  public void canCreateDevicesInParallel(String uuid) throws SDKException {
     IOSDevice device = DeviceService.get(uuid);
   }
 
   @Test(dataProvider = "devices")
   public void deviceCanSetLocale(String uuid)
-      throws LibImobileException, SDKException, InterruptedException {
+      throws SDKException, InterruptedException {
     InformationService service = new InformationService(DeviceService.get(uuid));
     service.setLanguage("en");
     service.setLanguage("en_US");

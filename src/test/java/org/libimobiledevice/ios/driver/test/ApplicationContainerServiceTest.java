@@ -14,7 +14,6 @@
 
 package org.libimobiledevice.ios.driver.test;
 
-import org.libimobiledevice.ios.driver.binding.exceptions.LibImobileException;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.services.AppContainerService;
 import org.libimobiledevice.ios.driver.binding.services.DeviceService;
@@ -26,7 +25,7 @@ import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
 public class ApplicationContainerServiceTest {
 
   @Test
-  public void emptyApplicationCache() throws LibImobileException, SDKException {
+  public void emptyApplicationCache() throws SDKException {
 
     AppContainerService appContainerService = new AppContainerService(DeviceService.get(main));
     appContainerService.clean("com.ebay.iphone");
