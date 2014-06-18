@@ -37,13 +37,13 @@ public class LibImobileException extends libImobileDeviceWrapperException {
     for (ErrorCode error : ErrorCode.values()) {
       if (code == error.getCode()) {
         this.code = error;
+        this.msg = this.code.toString();
         return;
       }
     }
     System.err.println(
         "Cannot find the returned error code for the call.Assigning unknown.");
     this.code = ErrorCode.JAVA_ERROR;
-    this.msg = this.code.toString();
   }
 
   @Override
