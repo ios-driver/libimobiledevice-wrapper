@@ -16,10 +16,19 @@ package org.libimobiledevice.ios.driver.binding.services;
 
 import com.sun.jna.ptr.PointerByReference;
 
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.formats.tiff.TiffImageParser;
 import org.libimobiledevice.ios.driver.binding.exceptions.SDKException;
 import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.nio.LongBuffer;
+import java.util.HashMap;
+
+import javax.imageio.ImageIO;
 
 import static org.libimobiledevice.ios.driver.binding.exceptions.SDKErrorCode.throwIfNeeded;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.screenshot_service_free;
@@ -49,7 +58,7 @@ public class ScreenshotService {
     throwIfNeeded(screenshot_service_free(service));
   }
 
-  public byte[] takeScreenshot() throws SDKException {
+  private byte[] takeScreenshotAsTiff() throws SDKException {
 
     PointerByReference ptr = new PointerByReference();
     LongBuffer sizeptr = LongBuffer.allocate(1);
@@ -64,6 +73,31 @@ public class ScreenshotService {
       long size = sizeptr.get(0);
       byte[] b = ptr.getValue().getByteArray(0, (int) size);
       return b;
+    }
+  }
+
+
+  private byte[] getPNGAsString() throws SDKException, ImageReadException, IOException {
+    byte[] raw = takeScreenshotAsTiff();
+
+    TiffImageParser parser = new TiffImageParser();
+    BufferedImage image = parser.getBufferedImage(raw, new HashMap<String, Object>());
+    File f = new File("screen.png");
+    //System.out.println("loading :\t" + (System.currentTimeMillis() - start) + " ms");
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    ImageIO.write(image, "png", out);
+    out.flush();
+    return out.toByteArray();
+  }
+
+  /**
+   * a screenshot in PNG format.
+   */
+  public byte[] takeScreenshot() throws SDKException {
+    try {
+      return getPNGAsString();
+    } catch (Exception e) {
+      throw new SDKException("Cannot take a screenshot : " + e.getMessage());
     }
   }
 }

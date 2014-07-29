@@ -27,9 +27,6 @@ import java.io.IOException;
 
 import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
 
-/**
- * Created by freynaud on 08/04/2014.
- */
 public class ScreenshotTest {
 
   @Test(expectedExceptions = SDKException.class)
