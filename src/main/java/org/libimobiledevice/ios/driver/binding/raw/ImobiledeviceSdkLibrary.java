@@ -21,7 +21,8 @@ import java.util.List;
  * For help, please visit <a href="http://nativelibs4java.googlecode.com/">NativeLibs4Java</a> , <a href="http://rococoa.dev.java.net/">Rococoa</a>, or <a href="http://jna.dev.java.net/">JNA</a>.
  */
 public class ImobiledeviceSdkLibrary implements Library {
-	public static final String JNA_LIBRARY_NAME = "imobiledevice-sdk";
+    private static final boolean initialized = JNAInit.init();
+    public static final String JNA_LIBRARY_NAME = "imobiledevice-sdk";
 	public static final NativeLibrary JNA_NATIVE_LIB = NativeLibrary.getInstance(ImobiledeviceSdkLibrary.JNA_LIBRARY_NAME);
 	static {
 		Native.register(ImobiledeviceSdkLibrary.class, ImobiledeviceSdkLibrary.JNA_NATIVE_LIB);
