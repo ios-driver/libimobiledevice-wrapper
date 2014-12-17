@@ -70,7 +70,8 @@ public class ApplicationInfo {
     return properties;
   }
 
-  private <T> T cast(NSObject value) {
+@SuppressWarnings("unchecked")
+private <T> T cast(NSObject value) {
     if (value == null) {
       return null;
     } else if (value instanceof NSString) {
