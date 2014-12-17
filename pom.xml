@@ -7,6 +7,18 @@
     <artifactId>libimobiledevice-wrapper</artifactId>
     <version>1.2-SNAPSHOT</version>
 
+    <scm>
+        <connection>scm:git:git@github.com:ios-driver/libimobiledevice-wrapper.git</connection>
+        <developerConnection>scm:git:git@github.com:ios-driver/libimobiledevice-wrapper.git</developerConnection>
+        <url>https://github.com/ios-driver/libimobiledevice-wrapper</url>
+    </scm>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
     <dependencies>
         <dependency>
             <groupId>net.java.dev.jna</groupId>
@@ -37,7 +49,6 @@
     </dependencies>
 
     <build>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
