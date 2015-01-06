@@ -18,11 +18,13 @@ import com.sun.jna.Pointer;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_syslog_service_read_cb_t;
 
 public class SyslogMessageListeners implements sdk_idevice_syslog_service_read_cb_t {
 
+  private static final Logger logger = Logger.getLogger(SyslogMessageListeners.class.getName());
   private final List<SysLogListener> all = new CopyOnWriteArrayList<SysLogListener>();
   private StringBuffer buff = new StringBuffer();
 
@@ -38,7 +40,7 @@ public class SyslogMessageListeners implements sdk_idevice_syslog_service_read_c
           log = new SysLogLine(line);
           h.onLog(log);
         } catch (SysLogLine.LogParsingException e) {
-          System.err.println(e.getMessage());
+          logger.fine(e.getMessage());
         }
       }
     } else {
