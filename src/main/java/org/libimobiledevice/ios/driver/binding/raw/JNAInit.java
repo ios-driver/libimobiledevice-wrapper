@@ -79,7 +79,6 @@ public class JNAInit {
     copy("darwin/idevicedebug", dst);
     dst.setExecutable(true);
 
-    ImobiledeviceSdkLibrary.sdk_idevice_event_unsubscribe();
     initialize = true;
     return true;
   }
