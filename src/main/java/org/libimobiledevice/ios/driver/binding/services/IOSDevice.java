@@ -22,6 +22,7 @@ import org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary;
 import java.util.logging.Logger;
 
 import static org.libimobiledevice.ios.driver.binding.exceptions.SDKErrorCode.throwIfNeeded;
+import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_restart;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_free;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_new;
 import static org.libimobiledevice.ios.driver.binding.raw.ImobiledeviceSdkLibrary.sdk_idevice_t;
@@ -66,6 +67,10 @@ public class IOSDevice {
       sysLogService = new SysLogService(this);
     }
     return sysLogService;
+  }
+
+  public void restart() throws SDKException {
+    throwIfNeeded(sdk_idevice_restart(sdk_handle));
   }
 }
 
