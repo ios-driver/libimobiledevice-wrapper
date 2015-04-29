@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -88,7 +89,7 @@ public class InstallerService {
     return infos;
   }
 
-  public void install(final File ipa, final InstallCallback cb) throws SDKException {
+  public void install(final String appId, final File ipa, final InstallCallback cb) throws SDKException {
     if (!ipa.exists()) {
       throw new SDKException("the ipa file " + ipa + " doesn't exist.");
     }
@@ -111,7 +112,7 @@ public class InstallerService {
       @Override
       public void onLog(SysLogLine line) {
         if (line.getMessage()
-            .equals("LaunchServices: Adding com.ebay.iphone to registration list")) {
+            .contains("ADDING REMOTE " + appId)) {
           if (line.getDate().after(now)) {
             cb.onUpdate("Done from syslog", 100, "Done");
             future.cancel(true);
@@ -128,6 +129,8 @@ public class InstallerService {
     } catch (InterruptedException e) {
       // ignore
     } catch (ExecutionException e) {
+      // ignore
+    } catch (CancellationException e) {
       // ignore
     } finally {
       device.getSysLogService().remove(checkSyslogForCompletion);
