@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.List;
 
+import static org.libimobiledevice.ios.driver.test.ConnectedDevices.ebayId4;
 import static org.libimobiledevice.ios.driver.test.ConnectedDevices.main;
 
 public class InstallTest {
@@ -45,8 +46,9 @@ public class InstallTest {
     File ui = new File("/Users/freynaud/UICatalog.ipa");
 //    File ui = new File("/Users/freynaud/out/com.yourcompany.UICatalog.ipa");
     File eBay = new File("/Users/freynaud/tmp/com.ebay.iphone.ipa");
+    String appId = "com.ebay.iphone";
 
-    service.install(ui, cb);
+    service.install(appId, eBay, cb);
 
     service.free();
 //    service.install(new File("/Users/freynaud/Downloads/ebay_iphone_enterprise_3.2.0a1_build6.ipa"));

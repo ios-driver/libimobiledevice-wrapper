@@ -34,6 +34,7 @@ public class DebugTest {
 
     IOSDevice d = DeviceService.get(main);
     InstallerService installer = new InstallerService(d);
+    String appId = "ios-driver.ios-driver";
     try {
       installer.getApplication("ios-driver.ios-driver");
     } catch (SDKException e) {
@@ -43,7 +44,7 @@ public class DebugTest {
           sout(operation, percent, message);
         }
       };
-      installer.install(new File("/Users/freynaud/ios-driver.ipa"), cb);
+      installer.install(appId, new File("/Users/freynaud/ios-driver.ipa"), cb);
     }
 
     DebugService service = new DebugService(DeviceService.get(main));

@@ -30,7 +30,7 @@ public class SysLogService {
   private final SyslogMessageListeners handlers = new SyslogMessageListeners();
   private boolean started = false;
 
-  SysLogService(IOSDevice d) throws SDKException {
+  public SysLogService(IOSDevice d) throws SDKException {
     PointerByReference ptr = new PointerByReference();
 
     throwIfNeeded(syslog_service_new(d.getSDKHandle(), ptr));
