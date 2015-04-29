@@ -70,6 +70,7 @@ public class IOSDevice {
   }
 
   public void restart() throws SDKException {
+    DeviceService.remove(uuid);
     throwIfNeeded(sdk_idevice_restart(sdk_handle));
   }
 }
